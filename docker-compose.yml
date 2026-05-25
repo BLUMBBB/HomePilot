@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    command: ["postgres", "-p", "5433"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: homepilot
+    ports:
+      - "15432:5433"
+    volumes:
+      - homepilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p 5433 -U postgres -d homepilot"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "5433"
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5433/homepilot
+      DATABASE_URL_SYNC: postgresql://postgres:postgres@db:5433/homepilot
+      SECRET_KEY: change-me-in-production-min-32-chars
+      PORT: "8001"
+      UPLOAD_DIR: /app/backend/uploads
+    ports:
+      - "8001:8001"
+      - "3003:3003"
+    volumes:
+      - ./backend/uploads:/app/backend/uploads
+
+volumes:
+  homepilot_pgdata:

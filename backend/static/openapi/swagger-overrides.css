@@ -1,0 +1,53 @@
+/* HomePilot — Swagger UI (customCssUrl) */
+.swagger-ui .topbar {
+  background: #1e3a2f;
+  border-bottom: 1px solid #2d5a47;
+  padding: 10px 0;
+}
+.swagger-ui .topbar .download-url-wrapper { display: none; }
+.swagger-ui .info .title {
+  color: #1e3a2f;
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+}
+.swagger-ui .info .base-url { color: #57534e; }
+.swagger-ui .scheme-container {
+  background: #f5f2eb;
+  border: 1px solid #e7e2d6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.swagger-ui .btn.authorize {
+  background: #2d5a47;
+  border-color: #1e3a2f;
+  color: #f5f2eb;
+  border-radius: 10px;
+}
+.swagger-ui .btn.authorize:hover {
+  background: #3d7359;
+  border-color: #2d5a47;
+}
+.swagger-ui .btn.execute {
+  background: #1e3a2f;
+  border-color: #1e3a2f;
+}
+.swagger-ui .btn.execute:hover {
+  background: #2d5a47;
+}
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: #2d5a47;
+}
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: #3d6b8a;
+}
+.swagger-ui .opblock.opblock-patch .opblock-summary-method,
+.swagger-ui .opblock.opblock-put .opblock-summary-method {
+  background: #8a6d3d;
+}
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background: #8a3d3d;
+}
+.swagger-ui .filter .operation-filter-input {
+  border-radius: 10px;
+  border: 1px solid #d6d3cd;
+}

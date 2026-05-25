@@ -1,0 +1,288 @@
+// HomePilot DB schema for https://dbdiagram.io
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table users {
+  id uuid [primary key]
+  email varchar(255) [unique, not null]
+  password_hash varchar(255)
+  role varchar [not null]
+  name varchar(255)
+  phone varchar(50)
+  locale varchar(5) [not null, default: 'ru']
+  is_active boolean [not null, default: true]
+  email_verified_at timestamp
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  photo_url varchar(512)
+  executor_status varchar
+  executor_invite_code varchar(64) [unique]
+}
+
+Table cities {
+  id uuid [primary key]
+  code varchar(64) [unique, not null]
+  name_ru varchar(255) [not null]
+  name_kk varchar(255) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table apartment_types {
+  id uuid [primary key]
+  code varchar(32) [unique, not null]
+  name_ru varchar(255) [not null]
+  name_kk varchar(255) [not null]
+  duration_light_min integer [not null]
+  duration_full_min integer [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table tariffs {
+  id uuid [primary key]
+  code varchar(32) [unique, not null]
+  name_ru varchar(255) [not null]
+  name_kk varchar(255) [not null]
+  cleaning_type varchar [not null]
+  visits_per_month integer [not null]
+  has_linen boolean [not null, default: false]
+  has_plants boolean [not null, default: false]
+  has_ironing boolean [not null, default: false]
+  is_active boolean [not null, default: true]
+  sort_order integer [not null, default: 0]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table checklist_templates {
+  id uuid [primary key]
+  cleaning_type varchar [not null]
+  apartment_type_id uuid
+  sort_order integer [not null, default: 0]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table checklist_items {
+  id uuid [primary key]
+  template_id uuid [not null]
+  title_ru varchar(512) [not null]
+  title_kk varchar(512) [not null]
+  sort_order integer [not null, default: 0]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table subscriptions {
+  id uuid [primary key]
+  user_id uuid [not null]
+  tariff_id uuid [not null]
+  apartment_type_id uuid [not null]
+  city_id uuid [not null]
+  address_street varchar(255) [not null]
+  address_building varchar(64) [not null]
+  address_flat varchar(64) [not null]
+  address_entrance varchar(32)
+  address_floor varchar(16)
+  address_doorcode varchar(64)
+  address_comment text
+  preferred_days jsonb [not null]
+  time_slot_start time [not null]
+  time_slot_end time [not null]
+  premium_linen boolean [not null, default: false]
+  premium_plants boolean [not null, default: false]
+  premium_ironing boolean [not null, default: false]
+  status varchar [not null]
+  started_at timestamp
+  ends_at timestamp
+  paused_until timestamp
+  executor_id uuid
+  auto_renew boolean [not null, default: true]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table subscription_pauses {
+  id uuid [primary key]
+  subscription_id uuid [not null]
+  paused_from date [not null]
+  paused_to date [not null]
+  reason text
+  created_at timestamp [not null]
+}
+
+Table visits {
+  id uuid [primary key]
+  subscription_id uuid [not null]
+  executor_id uuid
+  scheduled_date date [not null]
+  time_slot_start time [not null]
+  time_slot_end time [not null]
+  status varchar [not null]
+  completed_at timestamp
+  client_rating integer
+  reschedule_count_short integer [not null, default: 0]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table visit_photos {
+  id uuid [primary key]
+  visit_id uuid [not null]
+  checklist_item_id uuid
+  file_path varchar(512) [not null]
+  file_size integer
+  content_type varchar(64)
+  uploaded_at timestamp [not null]
+}
+
+Table visit_checklist_results {
+  id uuid [primary key]
+  visit_id uuid [not null]
+  checklist_item_id uuid [not null]
+  done boolean [not null]
+  photo_id uuid
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table executor_zones {
+  id uuid [primary key]
+  executor_id uuid [not null]
+  city_id uuid [not null]
+  zone_name varchar(255) [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table executor_invites {
+  id uuid [primary key]
+  code varchar(64) [unique, not null]
+  created_by_id uuid [not null]
+  expires_at timestamp [not null]
+  used_by_id uuid
+  used_at timestamp
+  created_at timestamp [not null]
+}
+
+Table support_tickets {
+  id uuid [primary key]
+  user_id uuid [not null]
+  visit_id uuid
+  subject varchar(255) [not null]
+  status varchar [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table support_messages {
+  id uuid [primary key]
+  ticket_id uuid [not null]
+  author_id uuid [not null]
+  author_role varchar(32) [not null]
+  body text [not null]
+  created_at timestamp [not null]
+}
+
+Table payments {
+  id uuid [primary key]
+  user_id uuid [not null]
+  subscription_id uuid
+  amount_kzt integer [not null]
+  currency varchar(3) [not null, default: 'KZT']
+  status varchar [not null]
+  external_id varchar(255)
+  paid_at timestamp
+  metadata jsonb
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table tariff_prices {
+  id uuid [primary key]
+  tariff_id uuid [not null]
+  apartment_type_id uuid [not null]
+  price_month_kzt integer [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+// Refs: child.column > parent.column (many-to-one)
+Ref: subscriptions.user_id > users.id
+Ref: subscriptions.tariff_id > tariffs.id
+Ref: subscriptions.apartment_type_id > apartment_types.id
+Ref: subscriptions.city_id > cities.id
+Ref: subscriptions.executor_id > users.id
+
+Ref: subscription_pauses.subscription_id > subscriptions.id
+
+Ref: visits.subscription_id > subscriptions.id
+Ref: visits.executor_id > users.id
+
+Ref: checklist_templates.apartment_type_id > apartment_types.id
+Ref: checklist_items.template_id > checklist_templates.id
+
+Ref: visit_photos.visit_id > visits.id
+Ref: visit_photos.checklist_item_id > checklist_items.id
+
+Ref: visit_checklist_results.visit_id > visits.id
+Ref: visit_checklist_results.checklist_item_id > checklist_items.id
+Ref: visit_checklist_results.photo_id > visit_photos.id
+
+Ref: executor_zones.executor_id > users.id
+Ref: executor_zones.city_id > cities.id
+
+Ref: executor_invites.created_by_id > users.id
+Ref: executor_invites.used_by_id > users.id
+
+Ref: support_tickets.user_id > users.id
+Ref: support_tickets.visit_id > visits.id
+
+Ref: support_messages.ticket_id > support_tickets.id
+Ref: support_messages.author_id > users.id
+
+Ref: payments.user_id > users.id
+Ref: payments.subscription_id > subscriptions.id
+
+Ref: tariff_prices.tariff_id > tariffs.id
+Ref: tariff_prices.apartment_type_id > apartment_types.id
+
+// Table groups: разносим блоки по диаграмме, чтобы линии связей меньше пересекались
+TableGroup "Справочники" [color: #4A90D9] {
+  users
+  cities
+  apartment_types
+  tariffs
+  tariff_prices
+}
+
+TableGroup "Чек-листы" [color: #50C878] {
+  checklist_templates
+  checklist_items
+}
+
+TableGroup "Подписки" [color: #E8A317] {
+  subscriptions
+  subscription_pauses
+}
+
+TableGroup "Визиты" [color: #9B59B6] {
+  visits
+  visit_photos
+  visit_checklist_results
+}
+
+TableGroup "Исполнители" [color: #E74C3C] {
+  executor_zones
+  executor_invites
+}
+
+TableGroup "Поддержка" [color: #1ABC9C] {
+  support_tickets
+  support_messages
+}
+
+TableGroup "Платежи" [color: #34495E] {
+  payments
+}

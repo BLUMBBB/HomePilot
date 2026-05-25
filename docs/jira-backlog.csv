@@ -1,0 +1,91 @@
+Summary,Description,Issue Type,Priority,Labels,Epic,Готовность
+Проект: начальная настройка,"Репозиторий, структура папок, .gitignore, README",Task,High,kickoff,Этап 0,Готово
+Инфраструктура: Docker,"Docker Compose для бэкенда, PostgreSQL, Redis (опц)",Task,High,kickoff,Этап 0,Готово
+Инфраструктура: CI/CD,"GitHub Actions / GitLab CI для тестов и деплоя",Task,Medium,kickoff,Этап 0,Не готово
+Бэкенд: FastAPI приложение,"main.py, config, CORS, подключение к БД",Task,High,foundation,Этап 1,Готово
+Бэкенд: модели User City Tariff,"Модели User, City, ApartmentType, Tariff, TariffPrice",Task,High,foundation,Этап 1,Готово
+Бэкенд: миграции Alembic,"Настройка Alembic, первая миграция",Task,High,foundation,Этап 1,Готово
+Бэкенд: seed справочников,"Сиды: города (Алматы), тарифы, типы квартир, цены",Task,High,foundation,Этап 1,Готово
+Бэкенд: API auth,"POST register, login, refresh, confirm-email, forgot-password, reset-password",Task,High,foundation,Этап 1,Готово
+Бэкенд: API cities и tariffs,"GET /cities, GET /tariffs с ценами по типам квартир",Task,High,foundation,Этап 1,Готово
+Фронтенд: Vite + React + TS,"Инициализация, Tailwind, React Router",Task,High,foundation,Этап 1,Готово
+Фронтенд: лендинг главная,"Главная страница: описание сервиса, CTA",Task,High,foundation,Этап 1,Готово
+Фронтенд: страница тарифов,"Список тарифов, цены по типам квартир, кнопка «Начать»",Task,High,foundation,Этап 1,Готово
+Фронтенд: регистрация и вход,"Страницы /register, /login с формами",Task,High,foundation,Этап 1,Готово
+Фронтенд: подтверждение email,"Страница подтверждения по коду/ссылке",Task,High,foundation,Этап 1,Готово
+Бэкенд: модель Subscription,"Модель Subscription, связи с User, Tariff, City, ApartmentType",Task,High,subscription,Этап 2,Готово
+Бэкенд: модель Visit Checklist,"Модели Visit, Checklist, VisitPhoto и связи",Task,High,subscription,Этап 2,Готово
+Бэкенд: API подписок,"POST/GET subscriptions, PATCH subscription, создание визитов при активации",Task,High,subscription,Этап 2,Готово
+Бэкенд: API визитов клиента,"GET visits, GET visit/:id, POST reschedule",Task,High,subscription,Этап 2,Готово
+Бэкенд: симуляция платежей,"POST create-intent, simulate-card, submit-card, confirm (тестовый режим)",Task,High,subscription,Этап 2,Готово
+Бэкенд: webhook платежа,"POST /webhooks/payment для подтверждения оплаты",Task,High,subscription,Этап 2,Готово
+Фронтенд: страница бронирования,"Оформление подписки: тариф, тип квартиры, адрес, дни, время",Task,High,subscription,Этап 2,Готово
+Фронтенд: страница оплаты,"Форма карты (симуляция), ввод кода подтверждения, переход в кабинет",Task,High,subscription,Этап 2,Готово
+Фронтенд: клиентский дашборд,"Дашборд: тариф, следующее списание, ближайший визит",Task,High,subscription,Этап 2,Готово
+Фронтенд: список визитов клиента,"Страница /dashboard/visits, карточки визитов, статусы",Task,High,subscription,Этап 2,Готово
+Фронтенд: детали визита клиента,"Страница визита, фото-отчёт и чеклист; перенос визита — в разделе слотов",Task,Medium,subscription,Этап 2,Готово
+Фронтенд: настройки слотов и подписки,"Редактирование предпочтительных дней и времени, подписка",Task,Medium,subscription,Этап 2,Готово
+Бэкенд: API исполнителя визиты,"GET executor/visits, GET executor/visits/:id с чек-листом",Task,High,executor,Этап 3,Готово
+Бэкенд: API начало и завершение визита,"POST start, POST complete, POST upload-photo, POST no-show",Task,High,executor,Этап 3,Готово
+Бэкенд: хранение фото,"Локальное хранилище или S3 для фото визитов",Task,High,executor,Этап 3,Готово
+Фронтенд: кабинет исполнителя,"Дашборд, список визитов на день/неделю",Task,High,executor,Этап 3,Готово
+Фронтенд: детали визита исполнителя,"Детали визита, чек-лист, кнопки «Начать» / «Завершить»",Task,High,executor,Этап 3,Готово
+Фронтенд: загрузка фото по чек-листу,"Отметка пунктов, загрузка фото к пунктам, завершение визита",Task,High,executor,Этап 3,Готово
+Фронтенд: просмотр фото-отчёта клиентом,"Галерея фото по пунктам чек-листа в карточке визита",Task,High,executor,Этап 3,Готово
+Бэкенд: правило переноса 24ч,"Проверка 24 ч до визита, лимит переносов в месяц",Task,Medium,executor,Этап 3,Не готово
+Админ: дашборд,"Сводка: активные подписки, визиты за день/неделю, доход, тикеты",Story,High,admin,Этап 4,Готово
+Админ: управление клиентами,"Список клиентов, поиск, карточка: профиль, подписка, визиты, платежи",Story,High,admin,Этап 4,Готово
+Админ: управление подписками,"Список подписок, смена статуса, назначение исполнителя, создание вручную",Story,High,admin,Этап 4,Готово
+Админ: управление визитами,"Список с фильтрами по датам (без календаря), назначение исполнителя, перенос, отмена",Story,High,admin,Этап 4,Готово
+Админ: управление исполнителями,"Список исполнителей, приглашение (код/ссылка), зоны, статус (активен/заблокирован)",Story,High,admin,Этап 4,Готово
+Админ: тарифы и цены,"CRUD тарифов, сетка цен (тариф × тип квартиры), чек-листы",Story,High,admin,Этап 4,Не готово
+Админ: справочники,"Города, типы квартир, пункты чек-листов",Story,Medium,admin,Этап 4,Не готово
+Бэкенд: модели Support,"support_tickets, support_messages, связь с visit_id",Task,High,support,Этап 4,Готово
+Бэкенд: API поддержки,"POST/GET tickets, GET/POST messages, POST visit/:id/complaint",Task,High,support,Этап 4,Готово
+Фронтенд: UI поддержки для клиента,"Создание тикета и переписка в /dashboard/support; претензия с карточки визита — только API",Story,High,support,Этап 4,Частично
+Админ: тикеты поддержки,"Список тикетов, ответы, управление статусом (открыт/в работе/закрыт)",Story,High,admin,Этап 4,Готово
+Админ: платежи,"Список и фильтры по статусу/датам; сверка с провайдером и возвраты — не реализованы",Story,Medium,admin,Этап 4,Частично
+Пауза подписки,"Клиентский UI и правила (макс 2 недели и т.д.) нет; оператор может выставить paused_until через админку",Story,High,launch,Этап 5,Не готово
+Отмена подписки,"Клиентский сценарий «отменить с доступом до конца периода» нет; статус можно сменить через админку",Story,High,launch,Этап 5,Не готово
+Восстановление пароля,"Фронтенд: forgot-password, reset-password по email (ссылка или код)",Story,High,launch,Этап 5,Готово
+Напоминания о визите,"Email за день/в день визита, шаблоны с поддержкой локали",Story,Medium,launch,Этап 5,Не готово
+i18n: казахский язык,"Переключатель языка, переводы ru/kk во фронтенде",Story,High,launch,Этап 5,Частично
+Оферта и политика конфиденциальности,"Страницы оферты и политики, чекбокс при оформлении",Task,High,launch,Этап 5,Частично
+Реальная интеграция платежей,"Подключить Kaspi Pay или CloudPayments, webhook, тестовый и прод режимы",Story,High,launch,Этап 5,Не готово
+Тестирование перед запуском,"Ручное и автотесты, проверка критических сценариев",Task,High,launch,Этап 5,Не готово
+Деплой на production,"Docker Compose prod, docs/DEPLOY.md; HTTPS/секреты/бэкапы — по окружению",Task,High,launch,Этап 5,Частично
+API тесты,"Расширить тесты: auth, subscriptions, visits, executor",Task,Medium,tech-debt,Post-MVP,Не готово
+Очистка API слоя фронтенда,"Заменить apiGet на authFetch где требуется авторизация",Task,Low,tech-debt,Post-MVP,Не готово
+Стандартизация обработки ошибок,"Унифицировать сообщения об ошибках и отображение во фронтенде",Task,Medium,tech-debt,Post-MVP,Не готово
+Состояния загрузки,"Улучшить loading и пустые состояния на страницах",Task,Medium,tech-debt,Post-MVP,Не готово
+Redis для JWT blacklist,"Logout и инвалидация токенов через Redis",Task,Low,tech-debt,Post-MVP,Не готово
+S3/MinIO для фото визитов,"Облачное хранилище вместо локальной FS",Task,Low,tech-debt,Post-MVP,Не готово
+Часовые пояса,"Исправить работу с часовыми поясами для дат визитов (клиент vs сервер)",Bug,Medium,bugs,Post-MVP,Не готово
+UX после оплаты,"Улучшить UX после успешной оплаты (редирект, сообщение)",Bug,Low,bugs,Post-MVP,Частично
+Валидация чеклиста исполнителя,"Проверять все пункты чеклиста перед завершением визита",Bug,Medium,bugs,Post-MVP,Не готово
+Второй город Астана,"Расширение справочников и зон для второго города",Story,Medium,post-mvp,Post-MVP,Не готово
+Категории задач и visit_tasks,"task_categories, visit_tasks, payload по задачам",Story,Medium,post-mvp,Post-MVP,Не готово
+Рефералы и промокоды,"Реферальная программа, промокоды, скидки",Story,Low,post-mvp,Post-MVP,Не готово
+Push-уведомления,"Push-напоминания о визите (через backend)",Story,Low,post-mvp,Post-MVP,Не готово
+Уведомления в админке,"Рассылка уведомлений клиентам, шаблоны",Story,Low,post-mvp,Post-MVP,Не готово
+Рейтинг и отзывы,"Рейтинг визита, отзывы клиента об исполнителе",Story,Low,post-mvp,Post-MVP,Не готово
+Мобильные приложения,"iOS и Android — отдельный этап",Epic,Low,post-mvp,Post-MVP,Не готово
+Observability & Monitoring,"Мониторинг платформы: логи, метрики, алерты и контроль деградации",Epic,High,observability,Platform,Не готово
+Мониторинг: структурированные логи,"Добавить JSON-логи для backend с request_id/user_id/route/status",Task,High,observability,Observability & Monitoring,Не готово
+Мониторинг: метрики API и БД,"Собирать latency p50/p95, 5xx rate, время запросов к БД",Task,High,observability,Observability & Monitoring,Не готово
+Мониторинг: healthcheck и readiness,"Есть GET /health; нет /ready и проверки БД",Task,Medium,observability,Observability & Monitoring,Частично
+Мониторинг: алерты по платежам и webhook,"Алерты при росте failed payments и ошибках webhook",Task,High,observability,Observability & Monitoring,Не готово
+Security & Compliance,"Безопасность, аудит и защита персональных данных",Epic,High,security,Platform,Не готово
+Security: rate limit для auth,"Модуль app/core/rate_limit.py есть; не подключён к маршрутам auth",Task,High,security,Security & Compliance,Частично
+Security: аудит действий администратора,"Логировать критичные админ-действия: изменение подписок, визитов, статусов",Task,High,security,Security & Compliance,Не готово
+Security: валидация upload файлов,"Проверять размер, mime-type и расширение загружаемых файлов",Task,High,security,Security & Compliance,Не готово
+Security: политика хранения данных,"Определить сроки хранения и удаление персональных данных и медиа",Task,Medium,security,Security & Compliance,Не готово
+Product Analytics,"Измерение продуктовых KPI и воронок",Epic,Medium,analytics,Platform,Не готово
+Analytics: события воронки onboarding,"События: регистрация, подтверждение email, оплата, первый визит",Task,High,analytics,Product Analytics,Не готово
+Analytics: retention подписок,"Отчеты по churn, pause, cancel и возвратам клиентов",Task,Medium,analytics,Product Analytics,Не готово
+Analytics: KPI дашборд для owner,"Панель: MRR, активные подписки, ARPU, completion rate визитов",Task,Medium,analytics,Product Analytics,Не готово
+Operations & Reliability,"Готовность к эксплуатации и инцидентам",Epic,High,operations,Platform,Не готово
+Ops: backup и restore drill,"Авто-бэкапы БД, проверка восстановления по расписанию",Task,High,operations,Operations & Reliability,Не готово
+Ops: runbook инцидентов,"Документы действий для сбоев платежей, email, webhook, upload",Task,High,operations,Operations & Reliability,Не готово
+Ops: feature flags для рискованных релизов,"Включение/выключение новых функций без деплоя",Task,Medium,operations,Operations & Reliability,Не готово
+Ops: release checklist,"Единый pre-release checklist: миграции, smoke, rollback план",Task,Medium,operations,Operations & Reliability,Не готово

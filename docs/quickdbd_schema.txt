@@ -1,0 +1,209 @@
+# HomePilot DB schema for https://app.quickdatabasediagrams.com/
+# Copy this into the editor and use "Export" for PNG/PDF.
+
+User
+-
+id PK uuid
+email string UNIQUE INDEX
+password_hash NULL string
+role string
+name NULL string
+phone NULL string
+locale string
+is_active boolean
+email_verified_at NULL datetime
+created_at datetime
+updated_at datetime
+photo_url NULL string
+executor_status NULL string
+executor_invite_code NULL string UNIQUE
+
+City
+-
+id PK uuid
+code string UNIQUE INDEX
+name_ru string
+name_kk string
+is_active boolean
+created_at datetime
+updated_at datetime
+
+ApartmentType
+-
+id PK uuid
+code string UNIQUE INDEX
+name_ru string
+name_kk string
+duration_light_min int
+duration_full_min int
+created_at datetime
+updated_at datetime
+
+Tariff
+-
+id PK uuid
+code string UNIQUE INDEX
+name_ru string
+name_kk string
+cleaning_type string
+visits_per_month int
+has_linen boolean
+has_plants boolean
+has_ironing boolean
+is_active boolean
+sort_order int
+created_at datetime
+updated_at datetime
+
+ChecklistTemplate
+-
+id PK uuid
+cleaning_type string
+apartment_type_id NULL uuid FK >- ApartmentType.id
+sort_order int
+created_at datetime
+updated_at datetime
+
+ChecklistItem
+-
+id PK uuid
+template_id uuid FK >- ChecklistTemplate.id
+title_ru string
+title_kk string
+sort_order int
+created_at datetime
+updated_at datetime
+
+Subscription
+-
+id PK uuid
+user_id uuid FK >- User.id
+tariff_id uuid FK >- Tariff.id
+apartment_type_id uuid FK >- ApartmentType.id
+city_id uuid FK >- City.id
+address_street string
+address_building string
+address_flat string
+address_entrance NULL string
+address_floor NULL string
+address_doorcode NULL string
+address_comment NULL text
+preferred_days jsonb
+time_slot_start time
+time_slot_end time
+premium_linen boolean
+premium_plants boolean
+premium_ironing boolean
+status string
+started_at NULL datetime
+ends_at NULL datetime
+paused_until NULL datetime
+executor_id NULL uuid FK >- User.id
+auto_renew boolean
+created_at datetime
+updated_at datetime
+
+SubscriptionPause
+-
+id PK uuid
+subscription_id uuid FK >- Subscription.id
+paused_from date
+paused_to date
+reason NULL text
+created_at datetime
+
+Visit
+-
+id PK uuid
+subscription_id uuid FK >- Subscription.id
+executor_id NULL uuid FK >- User.id
+scheduled_date date
+time_slot_start time
+time_slot_end time
+status string
+completed_at NULL datetime
+client_rating NULL int
+reschedule_count_short int
+created_at datetime
+updated_at datetime
+
+VisitPhoto
+-
+id PK uuid
+visit_id uuid FK >- Visit.id
+checklist_item_id NULL uuid FK >- ChecklistItem.id
+file_path string
+file_size NULL int
+content_type NULL string
+uploaded_at datetime
+
+VisitChecklistResult
+-
+id PK uuid
+visit_id uuid FK >- Visit.id
+checklist_item_id uuid FK >- ChecklistItem.id
+done boolean
+photo_id NULL uuid FK >- VisitPhoto.id
+created_at datetime
+updated_at datetime
+
+ExecutorZone
+-
+id PK uuid
+executor_id uuid FK >- User.id
+city_id uuid FK >- City.id
+zone_name string
+created_at datetime
+updated_at datetime
+
+ExecutorInvite
+-
+id PK uuid
+code string UNIQUE INDEX
+created_by_id uuid FK >- User.id
+expires_at datetime
+used_by_id NULL uuid FK >- User.id
+used_at NULL datetime
+created_at datetime
+
+SupportTicket
+-
+id PK uuid
+user_id uuid FK >- User.id
+visit_id NULL uuid FK >- Visit.id
+subject string
+status string
+created_at datetime
+updated_at datetime
+
+SupportMessage
+-
+id PK uuid
+ticket_id uuid FK >- SupportTicket.id
+author_id uuid FK >- User.id
+author_role string
+body text
+created_at datetime
+
+Payment
+-
+id PK uuid
+user_id uuid FK >- User.id
+subscription_id NULL uuid FK >- Subscription.id
+amount_kzt int
+currency string
+status string
+external_id NULL string INDEX
+paid_at NULL datetime
+metadata NULL jsonb
+created_at datetime
+updated_at datetime
+
+TariffPrice
+-
+id PK uuid
+tariff_id uuid FK >- Tariff.id
+apartment_type_id uuid FK >- ApartmentType.id
+price_month_kzt int
+created_at datetime
+updated_at datetime
