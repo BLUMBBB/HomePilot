@@ -172,7 +172,7 @@ jobs:
         run: |
           echo "Waiting for app to start..."
           for i in $(seq 1 12); do
-            STATUS=$(curl -sf https://mystartup.kz/health | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null || echo "")
+            STATUS=$(curl -sf https://unicrew.kz/health | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null || echo "")
             if [ "$STATUS" = "ok" ]; then
               echo "Health check passed"
               exit 0
