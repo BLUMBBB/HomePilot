@@ -15,9 +15,7 @@ services:
       retries: 10
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/blumbbb/homepilot-backend:latest
     restart: unless-stopped
     depends_on:
       db:
@@ -50,7 +48,6 @@ services:
     expose:
       - "8001"
     healthcheck:
-      # Uvicorn слушает только после миграций/сида в entrypoint — до этого nginx не должен отдавать /api.
       test:
         [
           "CMD",
@@ -64,12 +61,7 @@ services:
       start_period: 120s
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-      args:
-        VITE_API_BASE: /api/v1
-        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+    image: ghcr.io/blumbbb/homepilot-frontend:latest
     restart: unless-stopped
     depends_on:
       backend:
