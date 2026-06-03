@@ -1,5 +1,5 @@
 """Apartment types: список типов квартир."""
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +13,9 @@ router = APIRouter(prefix="/apartment-types", tags=["apartment-types"])
 async def list_apartment_types(
     locale: str = Query("ru", description="ru | kk"),
     db: DbSession = None,
+    response: Response = None,
 ):
+    response.headers["Cache-Control"] = "public, max-age=3600, stale-while-revalidate=7200"
     result = await db.execute(
         select(ApartmentType).order_by(ApartmentType.code)
     )
