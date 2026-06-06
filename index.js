@@ -77,33 +77,47 @@ function findPython() {
   throw new Error('Python 3 not found on this server.');
 }
 
+function packagesInstalled(python) {
+  try {
+    execFileSync(python, ['-c', 'import fastapi, uvicorn, sqlalchemy, aiosqlite'], {
+      timeout: 5000, stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function installDeps(python) {
+  // Skip if already installed (e.g. manually via pip --user)
+  if (packagesInstalled(python)) {
+    console.log('[pip] packages already installed, skipping.');
+    return;
+  }
+
   const req = path.join(BACKEND_DIR, 'requirements.txt');
   if (!fs.existsSync(req)) { console.warn('[pip] requirements.txt not found'); return; }
 
-  // Try strategies in order until one works
+  // Try pip via ~/.local/bin/pip first (installed with --user)
+  const userPip = path.join(process.env.HOME || '/root', '.local', 'bin', 'pip');
   const strategies = [
-    { label: '--user',               args: ['-m', 'pip', 'install', '-r', req, '--user'] },
-    { label: 'no flag',              args: ['-m', 'pip', 'install', '-r', req] },
-    { label: '--break-system-pkgs',  args: ['-m', 'pip', 'install', '-r', req, '--break-system-packages'] },
-    { label: '--target vendor/',     args: ['-m', 'pip', 'install', '-r', req, '--target', path.join(BACKEND_DIR, 'vendor')] },
+    { label: 'user pip',             cmd: userPip,  args: ['install', '-r', req, '--user'] },
+    { label: '--user',               cmd: python,   args: ['-m', 'pip', 'install', '-r', req, '--user'] },
+    { label: 'no flag',              cmd: python,   args: ['-m', 'pip', 'install', '-r', req] },
+    { label: '--break-system-pkgs',  cmd: python,   args: ['-m', 'pip', 'install', '-r', req, '--break-system-packages'] },
   ];
 
   for (const s of strategies) {
     try {
       console.log(`[pip] trying ${s.label}…`);
-      execFileSync(python, s.args, { cwd: BACKEND_DIR, stdio: 'inherit', timeout: 300_000 });
+      execFileSync(s.cmd, s.args, { cwd: BACKEND_DIR, stdio: 'inherit', timeout: 300_000 });
       console.log('[pip] done.');
-      // If vendor strategy succeeded, add to PYTHONPATH
-      if (s.label.includes('vendor')) {
-        process.env.PYTHONPATH = path.join(BACKEND_DIR, 'vendor') + (process.env.PYTHONPATH ? ':' + process.env.PYTHONPATH : '');
-      }
       return;
     } catch {
-      console.warn(`[pip] ${s.label} failed, trying next strategy…`);
+      console.warn(`[pip] ${s.label} failed, trying next…`);
     }
   }
-  throw new Error('[pip] all install strategies failed. Check server logs above for details.');
+  throw new Error('[pip] install failed. Run manually: python3 -m pip install -r backend/requirements.txt --user');
 }
 
 function waitForPort(port, ms = 40_000) {
