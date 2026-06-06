@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone, date, time
 
 from sqlalchemy import DateTime, Date, Time, Enum, String, Boolean, Text, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import Uuid as UUID, JSON as JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -21,19 +21,19 @@ class Subscription(Base):
     __tablename__ = "subscriptions"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     tariff_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("tariffs.id", ondelete="RESTRICT"), nullable=False
+        UUID(), ForeignKey("tariffs.id", ondelete="RESTRICT"), nullable=False
     )
     apartment_type_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("apartment_types.id", ondelete="RESTRICT"), nullable=False
+        UUID(), ForeignKey("apartment_types.id", ondelete="RESTRICT"), nullable=False
     )
     city_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("cities.id", ondelete="RESTRICT"), nullable=False
+        UUID(), ForeignKey("cities.id", ondelete="RESTRICT"), nullable=False
     )
     address_street: Mapped[str] = mapped_column(String(255), nullable=False)
     address_building: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -53,7 +53,7 @@ class Subscription(Base):
     ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     paused_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     executor_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+        UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     auto_renew: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -74,10 +74,10 @@ class SubscriptionPause(Base):
     __tablename__ = "subscription_pauses"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     subscription_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
     )
     paused_from: Mapped[date] = mapped_column(Date, nullable=False)
     paused_to: Mapped[date] = mapped_column(Date, nullable=False)

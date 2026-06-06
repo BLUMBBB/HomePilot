@@ -43,3 +43,7 @@ design/
 backend/uploads/
 payment_details.txt
 *.tsbuildinfo
+
+# SSH deploy keys — никогда не коммитить
+homepilot_deploy_key
+homepilot_deploy_key.pub

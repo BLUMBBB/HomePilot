@@ -7,7 +7,9 @@ from app.config import get_settings
 def ensure_schema() -> None:
     settings = get_settings()
     engine = create_engine(settings.DATABASE_URL_SYNC)
-    # PostgreSQL: ADD COLUMN IF NOT EXISTS — безопасно для повторных запусков.
+    # Skip for SQLite — create_all() already handles all columns.
+    if engine.dialect.name == 'sqlite':
+        return
     ddl = text(
         """
         ALTER TABLE users

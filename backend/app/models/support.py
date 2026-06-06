@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, Enum, String, Text, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -20,13 +20,13 @@ class SupportTicket(Base):
     __tablename__ = "support_tickets"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     visit_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("visits.id", ondelete="SET NULL"), nullable=True
+        UUID(), ForeignKey("visits.id", ondelete="SET NULL"), nullable=True
     )
     subject: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[str] = mapped_column(Enum(TicketStatus), nullable=False, default=TicketStatus.open)
@@ -43,13 +43,13 @@ class SupportMessage(Base):
     __tablename__ = "support_messages"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     ticket_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False
     )
     author_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     author_role: Mapped[str] = mapped_column(String(32), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)

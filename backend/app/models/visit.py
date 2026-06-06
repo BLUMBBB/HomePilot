@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone, date, time
 
 from sqlalchemy import DateTime, Date, Time, Enum, String, Integer, Boolean, ForeignKey, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid as UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -23,13 +23,13 @@ class Visit(Base):
     __tablename__ = "visits"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     subscription_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
     )
     executor_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+        UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
     time_slot_start: Mapped[time] = mapped_column(Time, nullable=False)
@@ -53,13 +53,13 @@ class VisitPhoto(Base):
     __tablename__ = "visit_photos"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     visit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
     )
     checklist_item_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True
+        UUID(), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True
     )
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
     file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -75,17 +75,17 @@ class VisitChecklistResult(Base):
     __table_args__ = (UniqueConstraint("visit_id", "checklist_item_id", name="uq_visit_checklist_item"),)
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(), primary_key=True, default=uuid.uuid4
     )
     visit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
     )
     checklist_item_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("checklist_items.id", ondelete="CASCADE"), nullable=False
+        UUID(), ForeignKey("checklist_items.id", ondelete="CASCADE"), nullable=False
     )
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
     photo_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("visit_photos.id", ondelete="SET NULL"), nullable=True
+        UUID(), ForeignKey("visit_photos.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
