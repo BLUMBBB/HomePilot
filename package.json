@@ -1,0 +1,13 @@
+{
+  "name": "homepilot",
+  "version": "1.0.0",
+  "description": "HomePilot — Node.js launcher for Python/FastAPI + React frontend on Hostinger",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
