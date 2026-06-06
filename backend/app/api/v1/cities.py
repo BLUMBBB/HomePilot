@@ -1,3 +1,4 @@
+from typing import Union
 """Cities: список активных городов."""
 from fastapi import APIRouter, Query
 from sqlalchemy import select

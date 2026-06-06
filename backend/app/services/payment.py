@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 """Payment service: mock (код), Stripe Checkout, webhook, fallback complete."""
 import asyncio
 import logging

@@ -1,3 +1,4 @@
+from typing import Union
 """Tariffs: список тарифов с ценами по типам квартир."""
 from fastapi import APIRouter, Query, Response
 from sqlalchemy import select

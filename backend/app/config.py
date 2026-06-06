@@ -1,6 +1,6 @@
 """Pydantic Settings — конфигурация из переменных окружения."""
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict

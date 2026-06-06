@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 """Админ API: клиенты, подписки, визиты, исполнители, поддержка, платежи."""
 import secrets
 from datetime import date, datetime, timedelta, timezone
