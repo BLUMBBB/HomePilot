@@ -1,6 +1,6 @@
 """Pydantic Settings — конфигурация из переменных окружения."""
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     )
 
     # Redis (optional)
-    REDIS_URL: str | None = Field(default=None)
+    REDIS_URL: Optional[str] = Field(default=None)
 
     # CORS
     CORS_ORIGINS: List[str] = Field(
@@ -55,27 +55,27 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = Field(default="./uploads", description="Local upload directory")
     MAX_UPLOAD_SIZE_MB: int = Field(default=10)
     # S3 (optional)
-    S3_BUCKET: str | None = None
-    S3_ENDPOINT: str | None = None
-    AWS_ACCESS_KEY: str | None = None
-    AWS_SECRET_KEY: str | None = None
+    S3_BUCKET: Optional[str] = None
+    S3_ENDPOINT: Optional[str] = None
+    AWS_ACCESS_KEY: Optional[str] = None
+    AWS_SECRET_KEY: Optional[str] = None
 
     # Payment
     PAYMENT_PROVIDER: str = Field(default="mock", description="mock | stripe")
-    PAYMENT_API_KEY: str | None = None
-    PAYMENT_WEBHOOK_SECRET: str | None = None
-    STRIPE_SECRET_KEY: str | None = Field(default=None, description="Secret key для Stripe API (test или live)")
-    STRIPE_WEBHOOK_SECRET: str | None = Field(
+    PAYMENT_API_KEY: Optional[str] = None
+    PAYMENT_WEBHOOK_SECRET: Optional[str] = None
+    STRIPE_SECRET_KEY: Optional[str] = Field(default=None, description="Secret key для Stripe API (test или live)")
+    STRIPE_WEBHOOK_SECRET: Optional[str] = Field(
         default=None,
         description="Signing secret для Stripe Webhooks (whsec_...)",
     )
 
     # Email
-    SMTP_HOST: str | None = None
+    SMTP_HOST: Optional[str] = None
     SMTP_PORT: int = Field(default=587)
-    SMTP_USER: str | None = None
-    SMTP_PASSWORD: str | None = None
-    EMAIL_FROM: str | None = None
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    EMAIL_FROM: Optional[str] = None
     EMAIL_CONFIRM_TOKEN_EXPIRE_HOURS: int = Field(
         default=24, description="Срок жизни токена подтверждения email в часах (legacy)"
     )
@@ -94,7 +94,7 @@ class Settings(BaseSettings):
     LOCALE_DEFAULT: str = Field(default="ru", description="ru | kk")
 
     # Google Sign-In (GIS id_token) — тот же Client ID, что и на фронте (VITE_GOOGLE_CLIENT_ID).
-    GOOGLE_CLIENT_ID: str | None = Field(default=None, description="OAuth 2.0 Client ID для проверки id_token")
+    GOOGLE_CLIENT_ID: Optional[str] = Field(default=None, description="OAuth 2.0 Client ID для проверки id_token")
 
     # Сид: учётки админ-панели (создаются только если пользователя с таким email ещё нет).
     SEED_ADMIN_EMAIL: str = Field(default="admin@homepilot.kz")

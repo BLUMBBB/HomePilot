@@ -1,3 +1,4 @@
+from typing import Optional
 """ChecklistTemplate and ChecklistItem models."""
 import enum
 import uuid
@@ -22,7 +23,7 @@ class ChecklistTemplate(Base):
         UUID(), primary_key=True, default=uuid.uuid4
     )
     cleaning_type: Mapped[str] = mapped_column(Enum(CleaningType), nullable=False)
-    apartment_type_id: Mapped[uuid.UUID | None] = mapped_column(
+    apartment_type_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("apartment_types.id", ondelete="SET NULL"), nullable=True
     )
     sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

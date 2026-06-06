@@ -1,3 +1,4 @@
+from typing import Optional
 """Auth request/response schemas."""
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -29,8 +30,8 @@ class RegisterRequest(BaseModel):
 
     email: EmailStr
     password: str = Field(..., min_length=8)
-    name: str | None = None
-    phone: str | None = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
     locale: str = "ru"
     accept_personal_data_processing: bool = Field(
         ...,
@@ -62,8 +63,8 @@ class RegisterExecutorRequest(BaseModel):
     invite_code: str
     email: EmailStr
     password: str = Field(..., min_length=8)
-    name: str | None = None
-    phone: str | None = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
     accept_personal_data_processing: bool = Field(
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",

@@ -1,3 +1,4 @@
+from typing import Optional
 """Payment service: mock (код), Stripe Checkout, webhook, fallback complete."""
 import asyncio
 import logging
@@ -48,7 +49,7 @@ def _absolute_url(path_or_url: str, settings) -> str:
     return f"{base}/{p.lstrip('/')}"
 
 
-def _stripe_success_url(return_url: str | None, settings) -> str:
+def _stripe_success_url(return_url: Optional[str], settings) -> str:
     """Stripe подставляет session id вместо литерала {CHECKOUT_SESSION_ID}."""
     base = _absolute_url(return_url or "/dashboard/slots?payment=success", settings)
     if "{CHECKOUT_SESSION_ID}" in base:
@@ -57,7 +58,7 @@ def _stripe_success_url(return_url: str | None, settings) -> str:
     return f"{base}{sep}session_id={{CHECKOUT_SESSION_ID}}"
 
 
-def _stripe_cancel_url(cancel_url: str | None, settings) -> str:
+def _stripe_cancel_url(cancel_url: Optional[str], settings) -> str:
     return _absolute_url(cancel_url or "/booking", settings)
 
 
@@ -79,13 +80,13 @@ async def create_payment_intent(
     db: AsyncSession,
     subscription_id,
     user_id,
-    return_url: str | None = None,
-    cancel_url: str | None = None,
-) -> tuple[Payment, str | None, str | None, str]:
+    return_url: Optional[str] = None,
+    cancel_url: Optional[str] = None,
+) -> tuple[Payment, Optional[str], Optional[str], str]:
     """Создаёт платёж pending. mock — код в БД + redirect на ЛК; stripe — Checkout URL.
 
     Для KZT в Stripe unit_amount задаётся в тыйынах (×100 от тенге).
-    Возвращает (payment, redirect_url, confirm_code|None, provider mock|stripe).
+    Возвращает (payment, redirect_url, Optional[confirm_code], provider mock|stripe).
     """
     settings = get_settings()
     result = await db.execute(
@@ -295,7 +296,7 @@ async def handle_payment_webhook(
     db: AsyncSession,
     external_id: str,
     status: str = "completed",
-) -> Payment | None:
+) -> Optional[Payment]:
     """Legacy JSON webhook (mock) или совместимость по external_id."""
     if status != "completed":
         return None

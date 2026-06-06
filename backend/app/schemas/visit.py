@@ -1,3 +1,4 @@
+from typing import Optional
 """Visit schemas."""
 from datetime import date, time, datetime
 from uuid import UUID
@@ -19,7 +20,7 @@ class VisitComplaintRequest(BaseModel):
 class ChecklistResultItem(BaseModel):
     checklist_item_id: UUID
     done: bool
-    photo_id: UUID | None = None
+    photo_id: Optional[UUID] = None
 
 
 class VisitCompleteRequest(BaseModel):
@@ -31,11 +32,11 @@ class VisitResponse(BaseModel):
 
     id: UUID
     subscription_id: UUID
-    executor_id: UUID | None
+    executor_id: Optional[UUID]
     scheduled_date: date
     time_slot_start: time
     time_slot_end: time
     status: str
-    completed_at: datetime | None
-    client_rating: int | None
+    completed_at: Optional[datetime]
+    client_rating: Optional[int]
     reschedule_count_short: int

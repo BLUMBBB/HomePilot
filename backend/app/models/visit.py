@@ -1,3 +1,4 @@
+from typing import Optional
 """Visit, VisitPhoto, VisitChecklistResult models."""
 import enum
 import uuid
@@ -28,15 +29,15 @@ class Visit(Base):
     subscription_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
     )
-    executor_id: Mapped[uuid.UUID | None] = mapped_column(
+    executor_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
     time_slot_start: Mapped[time] = mapped_column(Time, nullable=False)
     time_slot_end: Mapped[time] = mapped_column(Time, nullable=False)
     status: Mapped[str] = mapped_column(Enum(VisitStatus), nullable=False, default=VisitStatus.scheduled)
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    client_rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    completed_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    client_rating: Optional[Mapped[int]] = mapped_column(Integer, nullable=True)
     reschedule_count_short: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
@@ -58,12 +59,12 @@ class VisitPhoto(Base):
     visit_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
     )
-    checklist_item_id: Mapped[uuid.UUID | None] = mapped_column(
+    checklist_item_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True
     )
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
-    file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    content_type: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    file_size: Optional[Mapped[int]] = mapped_column(Integer, nullable=True)
+    content_type: Optional[Mapped[str]] = mapped_column(String(64), nullable=True)
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     visit = relationship("Visit", back_populates="photos")
@@ -84,7 +85,7 @@ class VisitChecklistResult(Base):
         UUID(), ForeignKey("checklist_items.id", ondelete="CASCADE"), nullable=False
     )
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    photo_id: Mapped[uuid.UUID | None] = mapped_column(
+    photo_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("visit_photos.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

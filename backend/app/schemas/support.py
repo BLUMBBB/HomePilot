@@ -1,3 +1,4 @@
+from typing import Optional
 """Support schemas."""
 from datetime import datetime
 from uuid import UUID
@@ -8,7 +9,7 @@ from pydantic import BaseModel, ConfigDict
 class TicketCreate(BaseModel):
     subject: str
     message: str
-    visit_id: UUID | None = None
+    visit_id: Optional[UUID] = None
 
 
 class MessageCreate(BaseModel):
@@ -31,7 +32,7 @@ class SupportTicketResponse(BaseModel):
 
     id: UUID
     user_id: UUID
-    visit_id: UUID | None
+    visit_id: Optional[UUID]
     subject: str
     status: str
     created_at: datetime

@@ -1,3 +1,4 @@
+from typing import Optional
 """Webhook: Stripe (подпись) или legacy JSON (mock / тесты)."""
 import json
 import logging
@@ -25,7 +26,7 @@ def _stripe_event_to_dict(event) -> dict:
 async def payment_webhook(
     request: Request,
     db: DbSession,
-    stripe_signature: str | None = Header(None, alias="Stripe-Signature"),
+    stripe_signature: Optional[str] = Header(None, alias="Stripe-Signature"),
 ):
     settings = get_settings()
     raw = await request.body()

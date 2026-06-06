@@ -1,3 +1,4 @@
+from typing import Optional
 """Visit service: reschedule, complete, no_show, assign_executor."""
 from datetime import datetime, timezone, time
 
@@ -153,7 +154,7 @@ async def complete_visit(
     visit_id,
     executor_id,
     results: list,
-    photos: list | None = None,
+    photos: Optional[list] = None,
 ) -> Visit:
     result = await db.execute(
         select(Visit).where(Visit.id == visit_id)

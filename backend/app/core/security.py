@@ -1,3 +1,4 @@
+from typing import Optional
 """Хэш пароля (bcrypt), создание и верификация JWT."""
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
@@ -46,7 +47,7 @@ def create_email_confirm_token(sub: str | UUID) -> str:
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def decode_token(token: str) -> dict | None:
+def decode_token(token: str) -> Optional[dict]:
     settings = get_settings()
     try:
         return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])

@@ -1,3 +1,4 @@
+from typing import Optional
 """ExecutorInvite model."""
 import uuid
 from datetime import datetime, timezone
@@ -20,8 +21,8 @@ class ExecutorInvite(Base):
         UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    used_by_id: Mapped[uuid.UUID | None] = mapped_column(
+    used_by_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    used_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

@@ -1,3 +1,4 @@
+from typing import Optional
 """Auth service: register, login, refresh, password."""
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -90,7 +91,7 @@ async def register_executor(db: AsyncSession, payload: RegisterExecutorRequest) 
     return user
 
 
-async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | None:
+async def authenticate_user(db: AsyncSession, email: str, password: str) -> Optional[User]:
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user or not user.password_hash or not verify_password(password, user.password_hash):
@@ -107,7 +108,7 @@ def tokens_for_user(user: User) -> tuple[str, str, int]:
     return access, refresh, expires_sec
 
 
-async def get_user_by_refresh_token(db: AsyncSession, refresh_token: str) -> User | None:
+async def get_user_by_refresh_token(db: AsyncSession, refresh_token: str) -> Optional[User]:
     payload = decode_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         return None

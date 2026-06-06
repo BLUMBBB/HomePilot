@@ -1,3 +1,4 @@
+from typing import Optional
 """Админ API: клиенты, подписки, визиты, исполнители, поддержка, платежи."""
 import secrets
 from datetime import date, datetime, timedelta, timezone
@@ -45,7 +46,7 @@ StaffUser = require_role("admin", "support")
 AdminUser = require_role("admin")
 
 
-def _sub_to_dict(sub: Subscription, *, price: int | None, tariff: Tariff | None, apt: ApartmentType | None) -> dict:
+def _sub_to_dict(sub: Subscription, *, price: Optional[int], tariff: Optional[Tariff], apt: Optional[ApartmentType]) -> dict:
     d = SubscriptionResponse.model_validate(sub).model_dump(mode="json")
     if price is not None:
         d["price_month_kzt"] = price
@@ -126,9 +127,9 @@ def _user_row(u: User) -> dict:
 async def admin_list_users(
     db: DbSession,
     _: User = StaffUser,
-    role: str | None = Query(None, description="client | executor"),
-    search: str | None = None,
-    is_active: bool | None = Query(None, description="фильтр по активности"),
+    role: Optional[str] = Query(None, description="client | executor"),
+    search: Optional[str] = None,
+    is_active: Optional[bool] = Query(None, description="фильтр по активности"),
     sort: str = Query("created_desc", description="created_desc | created_asc | email_asc"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -276,11 +277,11 @@ async def admin_patch_user(
 async def admin_list_subscriptions(
     db: DbSession,
     _: User = StaffUser,
-    status: str | None = None,
-    user_id: UUID | None = None,
-    tariff_id: UUID | None = None,
-    created_from: date | None = None,
-    created_to: date | None = None,
+    status: Optional[str] = None,
+    user_id: Optional[UUID] = None,
+    tariff_id: Optional[UUID] = None,
+    created_from: Optional[date] = None,
+    created_to: Optional[date] = None,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
@@ -411,13 +412,13 @@ async def admin_patch_subscription(
 async def admin_list_visits(
     db: DbSession,
     _: User = StaffUser,
-    scheduled_date: date | None = None,
-    date_from: date | None = None,
-    date_to: date | None = None,
-    executor_id: UUID | None = None,
-    subscription_id: UUID | None = None,
-    status: str | None = None,
-    client_search: str | None = None,
+    scheduled_date: Optional[date] = None,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+    executor_id: Optional[UUID] = None,
+    subscription_id: Optional[UUID] = None,
+    status: Optional[str] = None,
+    client_search: Optional[str] = None,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
@@ -676,9 +677,9 @@ async def admin_list_executor_invites(
 async def admin_list_tickets(
     db: DbSession,
     _: User = StaffUser,
-    status: str | None = None,
-    search: str | None = None,
-    user_id: UUID | None = None,
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    user_id: Optional[UUID] = None,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
@@ -801,10 +802,10 @@ async def admin_patch_ticket(
 async def admin_list_payments(
     db: DbSession,
     _: User = StaffUser,
-    user_id: UUID | None = None,
-    status: str | None = None,
-    date_from: date | None = None,
-    date_to: date | None = None,
+    user_id: Optional[UUID] = None,
+    status: Optional[str] = None,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):

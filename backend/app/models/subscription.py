@@ -1,3 +1,4 @@
+from typing import Optional
 """Subscription and SubscriptionPause models."""
 import enum
 import uuid
@@ -38,10 +39,10 @@ class Subscription(Base):
     address_street: Mapped[str] = mapped_column(String(255), nullable=False)
     address_building: Mapped[str] = mapped_column(String(64), nullable=False)
     address_flat: Mapped[str] = mapped_column(String(64), nullable=False)
-    address_entrance: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    address_floor: Mapped[str | None] = mapped_column(String(16), nullable=True)
-    address_doorcode: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    address_comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    address_entrance: Optional[Mapped[str]] = mapped_column(String(32), nullable=True)
+    address_floor: Optional[Mapped[str]] = mapped_column(String(16), nullable=True)
+    address_doorcode: Optional[Mapped[str]] = mapped_column(String(64), nullable=True)
+    address_comment: Optional[Mapped[str]] = mapped_column(Text, nullable=True)
     preferred_days: Mapped[list] = mapped_column(JSONB, nullable=False)  # [1-7]
     time_slot_start: Mapped[time] = mapped_column(Time, nullable=False)
     time_slot_end: Mapped[time] = mapped_column(Time, nullable=False)
@@ -49,10 +50,10 @@ class Subscription(Base):
     premium_plants: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     premium_ironing: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     status: Mapped[str] = mapped_column(Enum(SubscriptionStatus), nullable=False, default=SubscriptionStatus.draft)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    paused_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    executor_id: Mapped[uuid.UUID | None] = mapped_column(
+    started_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    ends_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    paused_until: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    executor_id: Mapped[uuid.Optional[UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     auto_renew: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
@@ -81,7 +82,7 @@ class SubscriptionPause(Base):
     )
     paused_from: Mapped[date] = mapped_column(Date, nullable=False)
     paused_to: Mapped[date] = mapped_column(Date, nullable=False)
-    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason: Optional[Mapped[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     subscription = relationship("Subscription", back_populates="pauses")
