@@ -1,5 +1,5 @@
-from typing import Optional
 """Payment schemas."""
+from typing import Optional
 from datetime import datetime
 from uuid import UUID
 

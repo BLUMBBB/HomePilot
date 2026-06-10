@@ -1,5 +1,5 @@
-from typing import Optional
 """Audit log for visit slot changes."""
+from typing import Optional
 import uuid
 from datetime import date, datetime, time, timezone
 
@@ -19,7 +19,7 @@ class SlotChangeLog(Base):
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     changed_by_role: Mapped[str] = mapped_column(String(32), nullable=False, default="system")
-    reason: Optional[Mapped[str]] = mapped_column(Text, nullable=True)
+    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     old_date: Mapped[date] = mapped_column(Date, nullable=False)
     old_start: Mapped[time] = mapped_column(Time, nullable=False)

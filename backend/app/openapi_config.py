@@ -1,5 +1,5 @@
-from typing import Union
 """OpenAPI / Swagger: описания, теги, кастомизация схемы."""
+from typing import Union
 from __future__ import annotations
 
 from fastapi import FastAPI

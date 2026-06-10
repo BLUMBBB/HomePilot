@@ -1,5 +1,5 @@
-from typing import Optional
 """Storage service: save visit photos (local FS)."""
+from typing import Optional
 import os
 import uuid
 from pathlib import Path

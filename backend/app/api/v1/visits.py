@@ -1,5 +1,5 @@
-from typing import Optional
 """Visits: список визитов клиента, детали, перенос, жалоба, фото."""
+from typing import Optional
 from datetime import date
 from pathlib import Path
 from uuid import UUID

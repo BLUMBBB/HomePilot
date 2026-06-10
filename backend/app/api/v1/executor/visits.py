@@ -1,5 +1,5 @@
-from typing import Optional
 """Executor: визиты, старт, завершение, no-show, загрузка фото."""
+from typing import Optional
 from datetime import date, datetime, time, timedelta
 from urllib.parse import quote
 from uuid import UUID

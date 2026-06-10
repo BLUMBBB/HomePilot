@@ -1,5 +1,5 @@
-from typing import Optional
 """Subscription service: create, activate, pause, cancel, generate visits."""
+from typing import Optional
 from datetime import date, datetime, time, timedelta, timezone
 from uuid import UUID
 

@@ -1,5 +1,5 @@
-from typing import Optional
 """Visit service: reschedule, complete, no_show, assign_executor."""
+from typing import Optional
 from datetime import datetime, timezone, time
 
 from sqlalchemy import select, func

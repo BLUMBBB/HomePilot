@@ -1,5 +1,5 @@
-from typing import Union
 """Apartment types: список типов квартир."""
+from typing import Union
 from fastapi import APIRouter, Query, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

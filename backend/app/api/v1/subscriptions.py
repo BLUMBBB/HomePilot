@@ -1,5 +1,5 @@
-from typing import Optional
 """Subscriptions: создание, текущая, по id, обновление."""
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter

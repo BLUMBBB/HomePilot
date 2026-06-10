@@ -1,5 +1,5 @@
-from typing import Optional
 """User schemas."""
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, ConfigDict

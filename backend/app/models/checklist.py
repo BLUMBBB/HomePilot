@@ -1,5 +1,5 @@
-from typing import Optional
 """ChecklistTemplate and ChecklistItem models."""
+from typing import Optional
 import enum
 import uuid
 from datetime import datetime, timezone

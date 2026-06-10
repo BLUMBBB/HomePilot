@@ -1,5 +1,5 @@
-from typing import Optional
 """Уведомления: отправка писем (регистрация, подтверждение email и т.п.)."""
+from typing import Optional
 
 import logging
 import smtplib

@@ -1,5 +1,5 @@
-from typing import Optional
 """Visit schemas."""
+from typing import Optional
 from datetime import date, time, datetime
 from uuid import UUID
 

@@ -1,5 +1,5 @@
-from typing import Optional
 """Subscription schemas."""
+from typing import Optional
 import enum
 from datetime import date, time, datetime
 from uuid import UUID

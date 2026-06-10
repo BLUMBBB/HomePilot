@@ -1,5 +1,5 @@
-from typing import Optional
 """Payment model."""
+from typing import Optional
 import enum
 import uuid
 from datetime import datetime, timezone
@@ -33,9 +33,9 @@ class Payment(Base):
     amount_kzt: Mapped[int] = mapped_column(Integer, nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="KZT", nullable=False)
     status: Mapped[str] = mapped_column(Enum(PaymentStatus), nullable=False, default=PaymentStatus.pending)
-    external_id: Optional[Mapped[str]] = mapped_column(String(255), nullable=True, index=True)
-    paid_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    extra_data: Optional[Mapped[dict]] = mapped_column(JSONB, nullable=True)  # в ТЗ — metadata; имя metadata зарезервировано в SQLAlchemy
+    external_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
+    paid_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    extra_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)  # в ТЗ — metadata; имя metadata зарезервировано в SQLAlchemy
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc)

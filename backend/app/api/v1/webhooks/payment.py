@@ -1,5 +1,5 @@
-from typing import Optional
 """Webhook: Stripe (подпись) или legacy JSON (mock / тесты)."""
+from typing import Optional
 import json
 import logging
 

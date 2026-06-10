@@ -1,5 +1,5 @@
-from typing import Optional
 """Visit, VisitPhoto, VisitChecklistResult models."""
+from typing import Optional
 import enum
 import uuid
 from datetime import datetime, timezone, date, time
@@ -36,8 +36,8 @@ class Visit(Base):
     time_slot_start: Mapped[time] = mapped_column(Time, nullable=False)
     time_slot_end: Mapped[time] = mapped_column(Time, nullable=False)
     status: Mapped[str] = mapped_column(Enum(VisitStatus), nullable=False, default=VisitStatus.scheduled)
-    completed_at: Optional[Mapped[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    client_rating: Optional[Mapped[int]] = mapped_column(Integer, nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    client_rating: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     reschedule_count_short: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
@@ -63,8 +63,8 @@ class VisitPhoto(Base):
         UUID(), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True
     )
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
-    file_size: Optional[Mapped[int]] = mapped_column(Integer, nullable=True)
-    content_type: Optional[Mapped[str]] = mapped_column(String(64), nullable=True)
+    file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    content_type: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     visit = relationship("Visit", back_populates="photos")

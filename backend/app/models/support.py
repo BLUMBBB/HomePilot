@@ -1,5 +1,5 @@
-from typing import Optional
 """SupportTicket and SupportMessage models."""
+from typing import Optional
 import enum
 import uuid
 from datetime import datetime, timezone

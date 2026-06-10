@@ -1,5 +1,5 @@
-from typing import Optional, Union
 """Хэш пароля (bcrypt), создание и верификация JWT."""
+from typing import Optional, Union
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
