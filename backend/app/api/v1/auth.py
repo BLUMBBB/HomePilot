@@ -1,6 +1,10 @@
 """Auth endpoints: register, login, refresh, forgot/reset password."""
-from fastapi import APIRouter, Depends
+from typing import Optional
 
+from fastapi import APIRouter, HTTPException
+import httpx
+
+from app.config import get_settings
 from app.core.dependencies import DbSession
 from app.core.security import create_access_token, create_refresh_token
 from app.schemas.auth import (
@@ -19,12 +23,30 @@ from app.services import auth as auth_service
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+async def _verify_recaptcha(token: Optional[str]) -> None:
+    """Проверяет reCAPTCHA v3 token. Пропускает проверку, если secret key не задан."""
+    secret = get_settings().RECAPTCHA_SECRET_KEY
+    if not secret:
+        return
+    if not token:
+        raise HTTPException(status_code=400, detail="Требуется подтверждение капчи")
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        resp = await client.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={"secret": secret, "response": token},
+        )
+    data = resp.json()
+    if not data.get("success") or data.get("score", 0) < 0.5:
+        raise HTTPException(status_code=400, detail="Проверка капчи не пройдена. Попробуйте ещё раз.")
+
+
 @router.post("/register", response_model=dict)
 async def register(
     payload: RegisterRequest,
     db: DbSession,
 ):
     print(">>> REGISTER: запрос получен, email:", payload.email, "<<<", flush=True)
+    await _verify_recaptcha(payload.recaptcha_token)
     user = await auth_service.register_client(db, payload)
     return {
         "user": UserResponse.model_validate(user),
@@ -37,6 +59,7 @@ async def register_executor(
     payload: RegisterExecutorRequest,
     db: DbSession,
 ):
+    await _verify_recaptcha(payload.recaptcha_token)
     user = await auth_service.register_executor(db, payload)
     access, expires_sec = create_access_token(user.id, user.role.value)[0], 30 * 60
     refresh = create_refresh_token(user.id)

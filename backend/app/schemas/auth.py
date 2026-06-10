@@ -37,6 +37,7 @@ class RegisterRequest(BaseModel):
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
     )
+    recaptcha_token: Optional[str] = Field(default=None, description="reCAPTCHA v3 token с фронтенда")
 
     @field_validator("accept_personal_data_processing")
     @classmethod
@@ -69,6 +70,7 @@ class RegisterExecutorRequest(BaseModel):
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
     )
+    recaptcha_token: Optional[str] = Field(default=None, description="reCAPTCHA v3 token с фронтенда")
 
     @field_validator("accept_personal_data_processing")
     @classmethod

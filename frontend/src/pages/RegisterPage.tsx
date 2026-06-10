@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils'
 
 export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
+  const { executeRecaptcha } = useGoogleReCaptcha()
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -51,12 +53,14 @@ export function RegisterPage() {
     setSuccess('')
     setLoading(true)
     try {
+      const recaptchaToken = executeRecaptcha ? await executeRecaptcha('register') : undefined
       await register({
         name: `${firstName.trim()} ${lastName.trim()}`,
         email: email.trim(),
         password,
         locale: 'ru',
         accept_personal_data_processing: true,
+        recaptcha_token: recaptchaToken,
       })
       setSuccess('Регистрация успешно выполнена. Перенаправляем на страницу подтверждения email…')
       setTimeout(() => navigate('/auth/confirm-email'), 1500)
