@@ -5,8 +5,6 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 import httpx
 
-logger = logging.getLogger(__name__)
-
 from app.config import get_settings
 from app.core.dependencies import DbSession
 from app.core.security import create_access_token, create_refresh_token
@@ -22,6 +20,8 @@ from app.schemas.auth import (
 )
 from app.schemas.user import UserResponse
 from app.services import auth as auth_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -98,7 +98,6 @@ async def login(
 ):
     user = await auth_service.authenticate_user(db, payload.email, payload.password)
     if not user:
-        from fastapi import HTTPException
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
     access, refresh, expires_sec = auth_service.tokens_for_user(user)
     return {
@@ -117,7 +116,6 @@ async def refresh(
 ):
     user = await auth_service.get_user_by_refresh_token(db, payload.refresh_token)
     if not user:
-        from fastapi import HTTPException
         raise HTTPException(status_code=401, detail="Недействительный refresh token")
     access, refresh, expires_sec = auth_service.tokens_for_user(user)
     return {

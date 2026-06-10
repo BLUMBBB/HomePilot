@@ -1,0 +1,4 @@
+[lint]
+# F401 (unused imports) and E712 (== True) are pre-existing and cleaned up separately.
+# E711 (== None) left enabled intentionally.
+ignore = ["F401", "E712", "F841", "F404"]

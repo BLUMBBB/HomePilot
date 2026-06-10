@@ -7,8 +7,9 @@ from email.message import EmailMessage
 
 from app.config import get_settings
 
-logger = logging.getLogger(__name__)
 
+
+logger = logging.getLogger(__name__)
 
 def _log_email_to_stdout(to_email: str, subject: str, body: str, *, code: Optional[str] = None, reason: str = "") -> None:
     """Дублирование письма в лог (docker logs) — dev или fallback при сбое SMTP."""

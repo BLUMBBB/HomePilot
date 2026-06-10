@@ -256,7 +256,6 @@ async def confirm_payment_by_code(
 ) -> Payment:
     """Подтверждение списания по 6-значному коду (тестовый платёж)."""
     from app.core.exceptions import ForbiddenError, NotFoundError
-
     code = code.strip()
     if len(code) != 6 or not code.isdigit():
         raise ForbiddenError("Неверный формат кода. Введите 6 цифр из SMS/приложения банка.")

@@ -3,7 +3,6 @@ import logging
 import secrets
 from typing import Optional
 
-logger = logging.getLogger(__name__)
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -34,6 +33,8 @@ from app.models.executor_invite import ExecutorInvite
 from app.schemas.auth import RegisterRequest, RegisterExecutorRequest
 from app.services.notifications import send_password_reset_email, send_registration_confirm_email
 
+
+logger = logging.getLogger(__name__)
 
 async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
     existing = await db.execute(select(User).where(User.email == payload.email))

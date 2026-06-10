@@ -4,7 +4,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-logger = logging.getLogger(__name__)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +17,8 @@ from app.schemas.payment import (
     SubmitCardRequest,
 )
 from app.services import payment as payment_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -97,7 +98,6 @@ async def submit_card(
         raise NotFoundError("Платёж не найден или уже проведён")
     if payment.external_id and str(payment.external_id).startswith("cs_"):
         from app.core.exceptions import AppException
-
         raise AppException(
             "Этот платёж оформляется через Stripe — откройте страницу оплаты Stripe.",
             status_code=400,

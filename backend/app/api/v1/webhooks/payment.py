@@ -9,7 +9,6 @@ from app.config import get_settings
 from app.core.dependencies import DbSession
 from app.services import payment as payment_service
 
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
@@ -34,6 +33,8 @@ async def payment_webhook(
 
     if wh_secret and stripe_signature:
         import stripe
+
+logger = logging.getLogger(__name__)
 
         stripe.api_key = (settings.STRIPE_SECRET_KEY or "").strip()
         try:
