@@ -1,3 +1,4 @@
+
 import { useCallback, useState } from 'react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link, useNavigate } from 'react-router-dom'
@@ -156,6 +157,7 @@ export function RegisterPage() {
                   autoComplete="new-password"
                   className="h-12 rounded-xl border-stone-200 focus:ring-forest-900 bg-cream-50/50"
                 />
+                <p className="text-xs text-stone-400">Минимум 8 символов, заглавная буква и цифра</p>
               </div>
 
               <label className="flex items-start gap-3 cursor-pointer group">

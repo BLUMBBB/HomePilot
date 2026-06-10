@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # App
     APP_ENV: str = Field(default="development", description="development | staging | production")
-    DEBUG: bool = Field(default=True, description="Debug mode")
+    DEBUG: bool = Field(default=False, description="Debug mode — включать только в development")
     PORT: int = Field(default=8001, description="Порт сервера (по умолчанию 8001)")
 
     # JWT

@@ -1,6 +1,9 @@
-from typing import Optional
 """Auth service: register, login, refresh, password."""
+import logging
 import secrets
+from typing import Optional
+
+logger = logging.getLogger(__name__)
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -52,7 +55,7 @@ async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
 
     # Отправляем письмо с 6-значным кодом подтверждения email.
     code = await _generate_email_confirm_code(db, user.id)
-    print(">>> REGISTER: отправляю письмо с кодом на", user.email, "<<<", flush=True)
+    logger.info("sending confirmation email to %s", user.email)
     send_registration_confirm_email(user.email, code, locale=user.locale)
 
     return user

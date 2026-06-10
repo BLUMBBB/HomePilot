@@ -11,16 +11,12 @@ logger = logging.getLogger(__name__)
 
 
 def _log_email_to_stdout(to_email: str, subject: str, body: str, *, code: Optional[str] = None, reason: str = "") -> None:
-    """Дублирование письма в stdout (docker logs) — dev или fallback при сбое SMTP."""
-    prefix = f"=== EMAIL ({reason}) ===" if reason else "=== EMAIL (SMTP не настроен) ==="
-    print(prefix, flush=True)
-    print("To:", to_email, flush=True)
-    print("Subject:", subject, flush=True)
-    print("Body:\n", body, flush=True)
+    """Дублирование письма в лог (docker logs) — dev или fallback при сбое SMTP."""
+    prefix = f"EMAIL ({reason})" if reason else "EMAIL (SMTP не настроен)"
+    logger.info("%s | To: %s | Subject: %s", prefix, to_email, subject)
+    logger.debug("Body: %s", body)
     if code:
-        print(">>> КОД ПОДТВЕРЖДЕНИЯ (введите на странице подтверждения):", flush=True)
-        print(f">>> {code}", flush=True)
-    print("=== END EMAIL ===", flush=True)
+        logger.info("CONFIRMATION CODE for %s: %s", to_email, code)
 
 
 def _send_email(to_email: str, subject: str, body: str, *, code: Optional[str] = None) -> None:

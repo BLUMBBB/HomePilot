@@ -1,8 +1,11 @@
 """Auth endpoints: register, login, refresh, forgot/reset password."""
+import logging
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 import httpx
+
+logger = logging.getLogger(__name__)
 
 from app.config import get_settings
 from app.core.dependencies import DbSession
@@ -45,7 +48,7 @@ async def register(
     payload: RegisterRequest,
     db: DbSession,
 ):
-    print(">>> REGISTER: запрос получен, email:", payload.email, "<<<", flush=True)
+    logger.info("register attempt: %s", payload.email)
     await _verify_recaptcha(payload.recaptcha_token)
     user = await auth_service.register_client(db, payload)
     return {
