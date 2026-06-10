@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r backend/requirements.txt
-          pip install pytest pytest-asyncio httpx aiosqlite
+          pip install pytest pytest-asyncio httpx aiosqlite asyncpg psycopg2-binary
 
       - name: Run migrations
         working-directory: backend
