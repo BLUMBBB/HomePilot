@@ -27,7 +27,7 @@ class Payment(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    subscription_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    subscription_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("subscriptions.id", ondelete="SET NULL"), nullable=True
     )
     amount_kzt: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -21,7 +21,7 @@ class ExecutorInvite(Base):
         UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    used_by_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    used_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

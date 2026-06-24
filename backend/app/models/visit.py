@@ -29,7 +29,7 @@ class Visit(Base):
     subscription_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
     )
-    executor_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    executor_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
@@ -59,7 +59,7 @@ class VisitPhoto(Base):
     visit_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
     )
-    checklist_item_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    checklist_item_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True
     )
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
@@ -85,7 +85,7 @@ class VisitChecklistResult(Base):
         UUID(), ForeignKey("checklist_items.id", ondelete="CASCADE"), nullable=False
     )
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    photo_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    photo_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("visit_photos.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

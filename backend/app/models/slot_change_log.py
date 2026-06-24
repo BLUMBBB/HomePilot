@@ -15,7 +15,7 @@ class SlotChangeLog(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(), primary_key=True, default=uuid.uuid4)
     visit_id: Mapped[uuid.UUID] = mapped_column(UUID(), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False)
-    changed_by_user_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    changed_by_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     changed_by_role: Mapped[str] = mapped_column(String(32), nullable=False, default="system")

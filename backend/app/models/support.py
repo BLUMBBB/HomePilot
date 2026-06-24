@@ -26,7 +26,7 @@ class SupportTicket(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    visit_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    visit_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("visits.id", ondelete="SET NULL"), nullable=True
     )
     subject: Mapped[str] = mapped_column(String(255), nullable=False)

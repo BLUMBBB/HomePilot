@@ -53,7 +53,7 @@ class Subscription(Base):
     started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     ends_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     paused_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    executor_id: Mapped[uuid.Optional[UUID]] = mapped_column(
+    executor_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     auto_renew: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
