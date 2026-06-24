@@ -11,7 +11,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.api.v1.router import api_v1_router
 from app.config import get_settings
+from app.core.exceptions import AppException, app_exception_handler
+from app.core.rate_limit import InMemoryRateLimiter
+from app.openapi_config import (
+    API_DESCRIPTION,
+    CONTACT,
+    LICENSE_INFO,
+    OPENAPI_TAGS,
+    attach_custom_openapi,
+    swagger_ui_parameters,
+)
 
 
 def _configure_logging() -> None:
@@ -41,17 +52,6 @@ def _configure_logging() -> None:
 
 
 _configure_logging()
-from app.api.v1.router import api_v1_router
-from app.core.exceptions import AppException, app_exception_handler
-from app.core.rate_limit import InMemoryRateLimiter
-from app.openapi_config import (
-    API_DESCRIPTION,
-    CONTACT,
-    LICENSE_INFO,
-    OPENAPI_TAGS,
-    attach_custom_openapi,
-    swagger_ui_parameters,
-)
 
 
 # Rate limiters: window 60 s, разные лимиты по эндпоинтам
