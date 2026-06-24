@@ -15,7 +15,7 @@ security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: Optional[Annotated[HTTPAuthorizationCredentials], Depends(security)],
+    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(security)],
     db: Annotated[AsyncSession, Depends(_get_db)],
 ) -> User:
     if not credentials:
