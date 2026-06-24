@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
 import { cn } from '@/lib/utils'
+import { capture } from '@/lib/analytics'
 
 export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
@@ -63,6 +64,7 @@ export function RegisterPage() {
         accept_personal_data_processing: true,
         recaptcha_token: recaptchaToken,
       })
+      capture('user_signed_up', { method: 'email' })
       setSuccess('Регистрация успешно выполнена. Перенаправляем на страницу подтверждения email…')
       setTimeout(() => navigate('/auth/confirm-email'), 1500)
     } catch (err) {

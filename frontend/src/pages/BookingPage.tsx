@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { capture } from '@/lib/analytics'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronRight, ChevronLeft, MapPin, Calendar, CreditCard, Home } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
@@ -34,6 +35,8 @@ export function BookingPage() {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const [cities, setCities] = useState<CityItem[]>([])
+
+  useEffect(() => { capture('booking_started') }, [])
   const [tariffs, setTariffs] = useState<TariffItem[]>([])
   const [apartmentTypes, setApartmentTypes] = useState<ApartmentTypeItem[]>([])
   const [loading, setLoading] = useState(true)

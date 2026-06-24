@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { BrandLockup } from '@/components/BrandLogo'
 import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
+import { capture } from '@/lib/analytics'
 
 export function LoginPage() {
   const { login, loginWithGoogle } = useAuth()
@@ -24,6 +25,7 @@ export function LoginPage() {
       setGoogleLoading(true)
       try {
         const user = await loginWithGoogle(idToken)
+        capture('user_logged_in', { method: 'google', role: user.role })
         navigate(getPostLoginPath(user), { replace: true })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Не удалось войти через Google.')
@@ -48,6 +50,7 @@ export function LoginPage() {
     setLoading(true)
     try {
       const user = await login({ email: email.trim(), password })
+      capture('user_logged_in', { method: 'email', role: user.role })
       navigate(getPostLoginPath(user), { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось войти.')

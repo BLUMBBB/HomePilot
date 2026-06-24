@@ -1,4 +1,7 @@
 """FastAPI application — точка входа."""
+import logging
+import logging.config
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
@@ -9,6 +12,35 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
+
+
+def _configure_logging() -> None:
+    """JSON logs in production, plain text in development."""
+    log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+    is_prod = os.environ.get("APP_ENV", "development") == "production"
+    if is_prod:
+        try:
+            from pythonjsonlogger import jsonlogger  # type: ignore
+
+            handler = logging.StreamHandler()
+            handler.setFormatter(
+                jsonlogger.JsonFormatter(
+                    fmt="%(asctime)s %(levelname)s %(name)s %(message)s",
+                    datefmt="%Y-%m-%dT%H:%M:%SZ",
+                )
+            )
+            logging.basicConfig(level=log_level, handlers=[handler], force=True)
+            return
+        except ImportError:
+            pass
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s %(levelname)s %(name)s — %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+
+_configure_logging()
 from app.api.v1.router import api_v1_router
 from app.core.exceptions import AppException, app_exception_handler
 from app.core.rate_limit import InMemoryRateLimiter
@@ -116,8 +148,18 @@ def create_app() -> FastAPI:
 
     @app.get("/health")
     async def health() -> dict:
-        """Health check для деплоя."""
-        return {"status": "ok", "version": "1.0.0"}
+        """Health check для деплоя — проверяет DB connectivity."""
+        from sqlalchemy import text
+        from app.db.session import async_session_maker
+        db_ok = False
+        try:
+            async with async_session_maker() as session:
+                await session.execute(text("SELECT 1"))
+            db_ok = True
+        except Exception:
+            pass
+        status = "ok" if db_ok else "degraded"
+        return {"status": status, "version": "1.0.0", "db": db_ok}
 
     return app
 

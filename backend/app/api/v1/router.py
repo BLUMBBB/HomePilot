@@ -7,6 +7,7 @@ from app.api.v1 import subscriptions, visits, payments, support
 from app.api.v1 import legal
 from app.api.v1.executor import visits as executor_visits
 from app.api.v1.webhooks import payment as webhook_payment
+from app.api.v1.webhooks import bereke as webhook_bereke
 
 api_v1_router = APIRouter()
 
@@ -30,3 +31,4 @@ api_v1_router.include_router(executor_visits.router)
 
 # Webhooks (без авторизации по токену)
 api_v1_router.include_router(webhook_payment.router)
+api_v1_router.include_router(webhook_bereke.router)

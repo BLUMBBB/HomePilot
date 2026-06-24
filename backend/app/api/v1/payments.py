@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import CurrentUser, DbSession
 from app.models import Payment
+from app.models.payment import PaymentStatus
 from app.schemas.payment import (
     ConfirmPaymentRequest,
     CreatePaymentIntentRequest,
@@ -17,6 +18,7 @@ from app.schemas.payment import (
     SubmitCardRequest,
 )
 from app.services import payment as payment_service
+from app.services import posthog_client
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +66,11 @@ async def stripe_checkout_complete(
     """Если webhook Stripe не дошёл, после return с session_id активируем платёж так же, как по webhook."""
     payment = await payment_service.complete_stripe_checkout_session(
         db, current_user.id, payload.session_id.strip()
+    )
+    await posthog_client.capture(
+        str(current_user.id),
+        "payment_completed",
+        {"payment_id": str(payment.id), "provider": "stripe"},
     )
     return {
         "payment_id": str(payment.id),
@@ -125,8 +132,48 @@ async def confirm_payment(
     payment = await payment_service.confirm_payment_by_code(
         db, payload.payment_id, current_user.id, payload.code
     )
+    await posthog_client.capture(
+        str(current_user.id),
+        "payment_completed",
+        {"payment_id": str(payment.id), "provider": "mock"},
+    )
     return {
         "payment_id": payment.id,
         "status": payment.status,
         "message": "Оплата успешно проведена. Подписка активирована.",
     }
+
+
+@router.post("/{payment_id}/refund", response_model=dict)
+async def refund_payment(
+    payment_id: UUID,
+    current_user: CurrentUser,
+    db: DbSession,
+):
+    """Возврат платежа. Только для своих completed-платежей."""
+    from app.core.exceptions import ForbiddenError, NotFoundError
+    from datetime import datetime, timezone
+
+    result = await db.execute(
+        select(Payment).where(
+            Payment.id == payment_id,
+            Payment.user_id == current_user.id,
+        )
+    )
+    payment = result.scalar_one_or_none()
+    if not payment:
+        raise NotFoundError("Платёж не найден")
+    if payment.status != PaymentStatus.completed:
+        raise ForbiddenError("Возврат возможен только для завершённых платежей")
+
+    payment.status = PaymentStatus.refunded
+    payment.updated_at = datetime.now(timezone.utc)
+    await db.flush()
+
+    await posthog_client.capture(
+        str(current_user.id),
+        "payment_refunded",
+        {"payment_id": str(payment.id), "amount_kzt": payment.amount_kzt},
+    )
+    logger.info("Payment refunded: payment_id=%s user_id=%s", payment_id, current_user.id)
+    return {"payment_id": str(payment.id), "status": "refunded", "message": "Возврат оформлен."}

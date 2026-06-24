@@ -100,6 +100,14 @@ class Settings(BaseSettings):
     # Если не задан, проверка капчи пропускается (удобно для локальной разработки).
     RECAPTCHA_SECRET_KEY: Optional[str] = Field(default=None, description="reCAPTCHA v3 secret key")
 
+    # PostHog server-side analytics (опционально)
+    POSTHOG_API_KEY: Optional[str] = Field(default=None, description="PostHog project API key")
+    POSTHOG_HOST: str = Field(default="https://eu.i.posthog.com", description="PostHog API host")
+
+    # Bereke Bank (опционально)
+    BEREKE_MERCHANT_ID: Optional[str] = Field(default=None, description="Bereke Bank merchant ID")
+    BEREKE_SECRET_KEY: Optional[str] = Field(default=None, description="Bereke Bank secret key for signature verification")
+
     # Сид: учётки админ-панели (создаются только если пользователя с таким email ещё нет).
     SEED_ADMIN_EMAIL: str = Field(default="admin@homepilot.kz")
     SEED_ADMIN_PASSWORD: str = Field(default="admin123", min_length=8)
