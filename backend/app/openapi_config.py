@@ -1,6 +1,7 @@
 """OpenAPI / Swagger: описания, теги, кастомизация схемы."""
-from typing import Union
 from __future__ import annotations
+
+from typing import Union
 
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
