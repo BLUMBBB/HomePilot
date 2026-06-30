@@ -1,5 +1,4 @@
 """Subscriptions: создание, текущая, по id, обновление."""
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -39,7 +38,7 @@ async def _reload_subscription_for_response(
     )
 
 
-def _subscription_to_response(sub: Subscription, price: Optional[int] = None) -> SubscriptionOut:
+def _subscription_to_response(sub: Subscription, price: int | None = None) -> SubscriptionOut:
     d = SubscriptionResponse.model_validate(sub).model_dump()
     if price is not None:
         d["price_month_kzt"] = price

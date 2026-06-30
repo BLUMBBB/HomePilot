@@ -1,5 +1,4 @@
 """Visit service: reschedule, complete, no_show, assign_executor."""
-from typing import Optional
 from datetime import datetime, timezone, time
 
 from sqlalchemy import select, func
@@ -154,7 +153,7 @@ async def complete_visit(
     visit_id,
     executor_id,
     results: list,
-    photos: Optional[list] = None,
+    photos: list | None = None,
 ) -> Visit:
     result = await db.execute(
         select(Visit).where(Visit.id == visit_id)

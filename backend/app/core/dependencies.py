@@ -1,5 +1,5 @@
 """Зависимости: get_current_user, get_db, проверка ролей."""
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -15,7 +15,7 @@ security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(security)],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(_get_db)],
 ) -> User:
     if not credentials:

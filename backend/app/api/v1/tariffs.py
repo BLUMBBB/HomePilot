@@ -1,6 +1,5 @@
 """Tariffs: список тарифов с ценами по типам квартир."""
-from typing import Union
-from fastapi import APIRouter, Query, Response
+from fastapi import APIRouter, Query
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,9 +15,7 @@ router = APIRouter(prefix="/tariffs", tags=["tariffs"])
 async def list_tariffs(
     locale: str = Query("ru", description="ru | kk"),
     db: DbSession = None,
-    response: Response = None,
 ):
-    response.headers["Cache-Control"] = "public, max-age=300, stale-while-revalidate=600"
     result = await db.execute(
         select(Tariff)
         .where(Tariff.is_active == True)

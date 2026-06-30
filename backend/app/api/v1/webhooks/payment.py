@@ -1,5 +1,4 @@
 """Webhook: Stripe (подпись) или legacy JSON (mock / тесты)."""
-from typing import Optional
 import json
 import logging
 
@@ -10,6 +9,7 @@ from app.core.dependencies import DbSession
 from app.services import payment as payment_service
 
 logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
 
@@ -25,7 +25,7 @@ def _stripe_event_to_dict(event) -> dict:
 async def payment_webhook(
     request: Request,
     db: DbSession,
-    stripe_signature: Optional[str] = Header(None, alias="Stripe-Signature"),
+    stripe_signature: str | None = Header(None, alias="Stripe-Signature"),
 ):
     settings = get_settings()
     raw = await request.body()
@@ -33,6 +33,7 @@ async def payment_webhook(
 
     if wh_secret and stripe_signature:
         import stripe
+
         stripe.api_key = (settings.STRIPE_SECRET_KEY or "").strip()
         try:
             event = stripe.Webhook.construct_event(payload=raw, sig_header=stripe_signature, secret=wh_secret)

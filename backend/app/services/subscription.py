@@ -1,5 +1,4 @@
 """Subscription service: create, activate, pause, cancel, generate visits."""
-from typing import Optional
 from datetime import date, datetime, time, timedelta, timezone
 from uuid import UUID
 
@@ -15,7 +14,7 @@ from app.services import visit as visit_service
 
 async def get_price_for_subscription(
     db: AsyncSession, tariff_id, apartment_type_id
-) -> Optional[int]:
+) -> int | None:
     result = await db.execute(
         select(TariffPrice.price_month_kzt).where(
             TariffPrice.tariff_id == tariff_id,

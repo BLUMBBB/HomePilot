@@ -1,5 +1,4 @@
 """Хэш пароля (bcrypt), создание и верификация JWT."""
-from typing import Optional, Union
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -22,7 +21,7 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(pwd_bytes, bcrypt.gensalt()).decode("utf-8")
 
 
-def create_access_token(sub: Union[str, UUID], role: str) -> tuple[str, int]:
+def create_access_token(sub: str | UUID, role: str) -> tuple[str, int]:
     settings = get_settings()
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"sub": str(sub), "role": role, "exp": expire, "type": "access"}
@@ -30,14 +29,14 @@ def create_access_token(sub: Union[str, UUID], role: str) -> tuple[str, int]:
     return token, settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
 
 
-def create_refresh_token(sub: Union[str, UUID]) -> str:
+def create_refresh_token(sub: str | UUID) -> str:
     settings = get_settings()
     expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {"sub": str(sub), "exp": expire, "type": "refresh"}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def create_email_confirm_token(sub: Union[str, UUID]) -> str:
+def create_email_confirm_token(sub: str | UUID) -> str:
     """Токен для подтверждения email (type=email_confirm)."""
     settings = get_settings()
     expire = datetime.now(timezone.utc) + timedelta(
@@ -47,7 +46,7 @@ def create_email_confirm_token(sub: Union[str, UUID]) -> str:
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def decode_token(token: str) -> Optional[dict]:
+def decode_token(token: str) -> dict | None:
     settings = get_settings()
     try:
         return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])

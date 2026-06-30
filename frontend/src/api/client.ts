@@ -18,7 +18,6 @@ export type RegisterBody = {
   locale?: string;
   /** Согласие на обработку ПД — обязательно true (дублируется двойным подтверждением на форме). */
   accept_personal_data_processing: boolean;
-  recaptcha_token?: string | null;
 };
 export type RegisterResponse = { user: UserProfile; message?: string };
 
@@ -135,7 +134,6 @@ export async function register(body: RegisterBody): Promise<RegisterResponse> {
         phone: body.phone || null,
         locale: body.locale ?? 'ru',
         accept_personal_data_processing: body.accept_personal_data_processing,
-        recaptcha_token: body.recaptcha_token ?? null,
       }),
     });
   } catch (e) {
@@ -762,7 +760,6 @@ export type RegisterExecutorBody = {
   name?: string | null;
   phone?: string | null;
   accept_personal_data_processing: boolean;
-  recaptcha_token?: string | null;
 };
 
 /** Регистрация исполнителя по коду приглашения (ответ как у login). */
@@ -777,7 +774,6 @@ export async function registerExecutor(body: RegisterExecutorBody): Promise<Logi
       name: body.name ?? null,
       phone: body.phone ?? null,
       accept_personal_data_processing: body.accept_personal_data_processing,
-      recaptcha_token: body.recaptcha_token ?? null,
     }),
   });
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;

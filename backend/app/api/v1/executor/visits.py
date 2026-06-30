@@ -1,5 +1,4 @@
 """Executor: визиты, старт, завершение, no-show, загрузка фото."""
-from typing import Optional
 from datetime import date, datetime, time, timedelta
 from urllib.parse import quote
 from uuid import UUID
@@ -46,7 +45,7 @@ def _slot_duration_minutes(t0: time, t1: time) -> int:
     return max(0, int((b - a).total_seconds() // 60))
 
 
-def _full_address_line(sub: Optional[Subscription], city_name: Optional[str]) -> Optional[str]:
+def _full_address_line(sub: Subscription | None, city_name: str | None) -> str | None:
     if not sub:
         return None
     parts = [city_name, sub.address_street, sub.address_building, sub.address_flat]
@@ -54,7 +53,7 @@ def _full_address_line(sub: Optional[Subscription], city_name: Optional[str]) ->
     return ", ".join(parts) if parts else None
 
 
-def _maps_url(sub: Optional[Subscription], city_name: Optional[str]) -> Optional[str]:
+def _maps_url(sub: Subscription | None, city_name: str | None) -> str | None:
     line = _full_address_line(sub, city_name)
     if not line:
         return None
@@ -100,9 +99,9 @@ def _serialize_executor_visit(v: Visit) -> dict:
 async def list_executor_visits(
     current_user: CurrentUser,
     db: DbSession,
-    date_from: Optional[date] = Query(None),
-    date_to: Optional[date] = Query(None),
-    status: Optional[str] = Query(
+    date_from: date | None = Query(None),
+    date_to: date | None = Query(None),
+    status: str | None = Query(
         None,
         description="Фильтр статусов через запятую: scheduled,in_progress,completed,...",
     ),
@@ -256,7 +255,7 @@ async def upload_visit_photo(
     current_user: CurrentUser,
     db: DbSession,
     file: UploadFile = File(...),
-    checklist_item_id: Optional[UUID] = Form(None),
+    checklist_item_id: UUID | None = Form(None),
 ):
     _executor_only(current_user)
     result = await db.execute(

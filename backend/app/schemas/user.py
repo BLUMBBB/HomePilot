@@ -1,14 +1,13 @@
 """User schemas."""
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class UserBase(BaseModel):
-    email: Optional[EmailStr] = None
-    name: Optional[str] = None
-    phone: Optional[str] = None
+    email: EmailStr | None = None
+    name: str | None = None
+    phone: str | None = None
     locale: str = "ru"
 
 
@@ -18,9 +17,9 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    phone: Optional[str] = None
-    locale: Optional[str] = None
+    name: str | None = None
+    phone: str | None = None
+    locale: str | None = None
 
 
 class UserResponse(BaseModel):
@@ -28,10 +27,10 @@ class UserResponse(BaseModel):
 
     id: UUID
     email: str
-    name: Optional[str]
-    phone: Optional[str]
+    name: str | None
+    phone: str | None
     role: str
     locale: str
     is_active: bool
-    photo_url: Optional[str] = None
-    executor_status: Optional[str] = None
+    photo_url: str | None = None
+    executor_status: str | None = None

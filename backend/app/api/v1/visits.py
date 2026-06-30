@@ -1,5 +1,4 @@
 """Visits: список визитов клиента, детали, перенос, жалоба, фото."""
-from typing import Optional
 from datetime import date
 from pathlib import Path
 from uuid import UUID
@@ -25,9 +24,9 @@ router = APIRouter(prefix="/visits", tags=["visits"])
 async def list_visits(
     current_user: CurrentUser,
     db: DbSession,
-    from_date: Optional[date] = Query(None),
-    to_date: Optional[date] = Query(None),
-    status: Optional[str] = Query(None),
+    from_date: date | None = Query(None),
+    to_date: date | None = Query(None),
+    status: str | None = Query(None),
 ):
     q = (
         select(Visit)

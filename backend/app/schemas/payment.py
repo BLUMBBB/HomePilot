@@ -1,5 +1,4 @@
 """Payment schemas."""
-from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
@@ -8,8 +7,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class CreatePaymentIntentRequest(BaseModel):
     subscription_id: UUID
-    return_url: Optional[str] = None
-    cancel_url: Optional[str] = None
+    return_url: str | None = None
+    cancel_url: str | None = None
 
 
 class SubmitCardRequest(BaseModel):
@@ -35,8 +34,8 @@ class StripeCheckoutCompleteRequest(BaseModel):
 
 class CreatePaymentIntentResponse(BaseModel):
     payment_id: UUID
-    redirect_url: Optional[str] = None
-    client_secret: Optional[str] = None
+    redirect_url: str | None = None
+    client_secret: str | None = None
 
 
 class PaymentResponse(BaseModel):
@@ -44,9 +43,9 @@ class PaymentResponse(BaseModel):
 
     id: UUID
     user_id: UUID
-    subscription_id: Optional[UUID]
+    subscription_id: UUID | None
     amount_kzt: int
     currency: str
     status: str
-    paid_at: Optional[datetime]
+    paid_at: datetime | None
     created_at: datetime

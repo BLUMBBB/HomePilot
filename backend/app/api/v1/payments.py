@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
+logger = logging.getLogger(__name__)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,11 +17,7 @@ from app.schemas.payment import (
     StripeCheckoutCompleteRequest,
     SubmitCardRequest,
 )
-from app.models.payment import PaymentStatus
 from app.services import payment as payment_service
-from app.services import posthog_client
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -100,6 +97,7 @@ async def submit_card(
         raise NotFoundError("Платёж не найден или уже проведён")
     if payment.external_id and str(payment.external_id).startswith("cs_"):
         from app.core.exceptions import AppException
+
         raise AppException(
             "Этот платёж оформляется через Stripe — откройте страницу оплаты Stripe.",
             status_code=400,
@@ -127,48 +125,8 @@ async def confirm_payment(
     payment = await payment_service.confirm_payment_by_code(
         db, payload.payment_id, current_user.id, payload.code
     )
-    await posthog_client.capture(
-        str(current_user.id),
-        "payment_completed",
-        {"payment_id": str(payment.id), "provider": "mock"},
-    )
     return {
         "payment_id": payment.id,
         "status": payment.status,
         "message": "Оплата успешно проведена. Подписка активирована.",
     }
-
-
-@router.post("/{payment_id}/refund", response_model=dict)
-async def refund_payment(
-    payment_id: UUID,
-    current_user: CurrentUser,
-    db: DbSession,
-):
-    """Возврат платежа. Только для своих completed-платежей."""
-    from app.core.exceptions import ForbiddenError, NotFoundError
-    from datetime import datetime, timezone
-
-    result = await db.execute(
-        select(Payment).where(
-            Payment.id == payment_id,
-            Payment.user_id == current_user.id,
-        )
-    )
-    payment = result.scalar_one_or_none()
-    if not payment:
-        raise NotFoundError("Платёж не найден")
-    if payment.status != PaymentStatus.completed:
-        raise ForbiddenError("Возврат возможен только для завершённых платежей")
-
-    payment.status = PaymentStatus.refunded
-    payment.updated_at = datetime.now(timezone.utc)
-    await db.flush()
-
-    await posthog_client.capture(
-        str(current_user.id),
-        "payment_refunded",
-        {"payment_id": str(payment.id), "amount_kzt": payment.amount_kzt},
-    )
-    logger.info("Payment refunded: payment_id=%s user_id=%s", payment_id, current_user.id)
-    return {"payment_id": str(payment.id), "status": "refunded", "message": "Возврат оформлен."}

@@ -1,5 +1,4 @@
 """Cities: список активных городов."""
-from typing import Union
 from fastapi import APIRouter, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -1,22 +1,15 @@
 import { useState, useEffect } from 'react'
 import { getTariffs, getApartmentTypes, type TariffItem, type ApartmentTypeItem } from '@/api/client'
 
-const _cache: Record<string, { tariffs: TariffItem[]; apartmentTypes: ApartmentTypeItem[]; ts: number }> = {}
-const CACHE_TTL_MS = 5 * 60 * 1000
-
 export function useTariffs(locale = 'ru') {
-  const cached = _cache[locale] && Date.now() - _cache[locale].ts < CACHE_TTL_MS ? _cache[locale] : undefined
-
-  const [tariffs, setTariffs] = useState<TariffItem[]>(cached?.tariffs ?? [])
-  const [apartmentTypes, setApartmentTypes] = useState<ApartmentTypeItem[]>(cached?.apartmentTypes ?? [])
-  const [loading, setLoading] = useState(!cached)
+  const [tariffs, setTariffs] = useState<TariffItem[]>([])
+  const [apartmentTypes, setApartmentTypes] = useState<ApartmentTypeItem[]>([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (cached) return
     Promise.all([getTariffs(locale), getApartmentTypes(locale)])
       .then(([t, a]) => {
-        _cache[locale] = { tariffs: t, apartmentTypes: a, ts: Date.now() }
         setTariffs(t)
         setApartmentTypes(a)
       })

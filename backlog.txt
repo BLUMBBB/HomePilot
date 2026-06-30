@@ -54,12 +54,6 @@ i18n: казахский язык,"Переключатель языка, пер
 Реальная интеграция платежей,"Подключить Kaspi Pay или CloudPayments, webhook, тестовый и прод режимы",Story,High,launch,Этап 5,Не готово
 Тестирование перед запуском,"Ручное и автотесты, проверка критических сценариев",Task,High,launch,Этап 5,Не готово
 Деплой на production,"Docker Compose prod, docs/DEPLOY.md; HTTPS/секреты/бэкапы — по окружению",Task,High,launch,Этап 5,Частично
-Деплой: Node.js launcher для Python/uvicorn,"index.js ищет python3 на сервере запускает uvicorn на 127.0.0.1:8000 и проксирует /api/ /docs /redoc /health /uploads на него; всё остальное раздаёт frontend/dist как SPA",Task,High,deploy,DEPLOY-001,Готово
-Деплой: root package.json для Hostinger,"scripts.start=node index.js; scripts.build=npm --prefix frontend run build; engines.node>=18; никаких npm-зависимостей для запуска — только встроенные модули Node",Task,High,deploy,DEPLOY-001,Готово
-Деплой: внешняя PostgreSQL (Neon или Supabase),"Hostinger shared hosting не предоставляет PostgreSQL; DATABASE_URL и DATABASE_URL_SYNC должны указывать на внешний managed PostgreSQL (Neon.tech бесплатный tier или Supabase)",Task,High,deploy,DEPLOY-001,Не готово
-Деплой: переменные окружения в панели Hostinger,"Выставить в Node.js → Manage → Environment Variables: SECRET_KEY APP_ENV=production DATABASE_URL DATABASE_URL_SYNC CORS_ORIGINS UPLOAD_DIR=/home/user/uploads PAYMENT_PROVIDER",Task,High,deploy,DEPLOY-001,Не готово
-Деплой: сборка фронтенда перед деплоем,"npm run build собирает Vite в frontend/dist; запустить локально и закоммитить dist/ ИЛИ добавить в Hostinger build command поле",Task,Medium,deploy,DEPLOY-001,Не готово
-Деплой: Alembic миграции на prod БД,"После выставления DATABASE_URL_SYNC один раз запустить: cd backend && python -m alembic upgrade head",Task,High,deploy,DEPLOY-001,Не готово
 API тесты,"Расширить тесты: auth, subscriptions, visits, executor",Task,Medium,tech-debt,Post-MVP,Не готово
 Очистка API слоя фронтенда,"Заменить apiGet на authFetch где требуется авторизация",Task,Low,tech-debt,Post-MVP,Не готово
 Стандартизация обработки ошибок,"Унифицировать сообщения об ошибках и отображение во фронтенде",Task,Medium,tech-debt,Post-MVP,Не готово

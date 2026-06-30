@@ -1,5 +1,4 @@
 """Tariff schemas."""
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -7,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 class TariffPriceSchema(BaseModel):
     apartment_type_id: UUID
-    apartment_type_code: Optional[str] = None
+    apartment_type_code: str | None = None
     price_month_kzt: int
 
 

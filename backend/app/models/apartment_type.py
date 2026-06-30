@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, String, Integer
-from sqlalchemy import Uuid as UUID
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -13,7 +13,7 @@ class ApartmentType(Base):
     __tablename__ = "apartment_types"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     code: Mapped[str] = mapped_column(String(32), unique=True, nullable=False, index=True)
     name_ru: Mapped[str] = mapped_column(String(255), nullable=False)

@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
-import { usePageTracking } from '@/hooks/usePageTracking'
-import { useAnalyticsIdentify } from '@/hooks/useAnalyticsIdentify'
 import { Layout } from '@/components/Layout'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { HomePage } from '@/pages/HomePage'
@@ -43,10 +41,10 @@ import { PrivacyPolicyPage } from '@/pages/legal/PrivacyPolicyPage'
 import { TermsOfServicePage } from '@/pages/legal/TermsOfServicePage'
 import { PublicOfferPage } from '@/pages/legal/PublicOfferPage'
 
-function AppRoutes() {
-  usePageTracking()
-  useAnalyticsIdentify()
+export default function App() {
   return (
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />
@@ -96,14 +94,6 @@ function AppRoutes() {
           <Route path="register-executor" element={<RegisterExecutorPage />} />
           <Route path="auth/confirm-email" element={<ConfirmEmailPage />} />
         </Routes>
-  )
-}
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   )

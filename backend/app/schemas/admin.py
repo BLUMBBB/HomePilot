@@ -1,5 +1,4 @@
 """Тела запросов для админ-API."""
-from typing import Optional
 from datetime import date, datetime, time
 from uuid import UUID
 
@@ -7,21 +6,21 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class AdminUserPatch(BaseModel):
-    is_active: Optional[bool] = None
+    is_active: bool | None = None
 
 
 class AdminSubscriptionPatch(BaseModel):
-    executor_id: Optional[UUID] = None
-    status: Optional[str] = None
-    auto_renew: Optional[bool] = None
-    preferred_days: Optional[list[int]] = None
-    time_slot_start: Optional[time] = None
-    time_slot_end: Optional[time] = None
-    paused_until: Optional[datetime] = None
+    executor_id: UUID | None = None
+    status: str | None = None
+    auto_renew: bool | None = None
+    preferred_days: list[int] | None = None
+    time_slot_start: time | None = None
+    time_slot_end: time | None = None
+    paused_until: datetime | None = None
 
     @field_validator("preferred_days")
     @classmethod
-    def validate_days(cls, v: Optional[list[int]]) -> Optional[list[int]]:
+    def validate_days(cls, v: list[int] | None) -> list[int] | None:
         if v is None:
             return v
         if not v or any(d < 1 or d > 7 for d in v):
@@ -30,10 +29,10 @@ class AdminSubscriptionPatch(BaseModel):
 
 
 class AdminVisitPatch(BaseModel):
-    status: Optional[str] = Field(None, description="например cancelled")
-    new_scheduled_date: Optional[date] = None
-    new_time_slot_start: Optional[time] = None
-    new_time_slot_end: Optional[time] = None
+    status: str | None = Field(None, description="например cancelled")
+    new_scheduled_date: date | None = None
+    new_time_slot_start: time | None = None
+    new_time_slot_end: time | None = None
 
 
 class AssignExecutorBody(BaseModel):
@@ -49,5 +48,5 @@ class SupportTicketStatusPatch(BaseModel):
 
 
 class ExecutorAdminPatch(BaseModel):
-    executor_status: Optional[str] = None
-    is_active: Optional[bool] = None
+    executor_status: str | None = None
+    is_active: bool | None = None

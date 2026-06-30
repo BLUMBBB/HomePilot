@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { capture } from '@/lib/analytics'
 import { Check, ArrowRight, Clock, Shield } from 'lucide-react'
 import { BrandMark } from '@/components/BrandLogo'
 import { Button } from '@/components/ui/button'
@@ -75,8 +73,6 @@ const TARIFF_CONTENT: Record<
 export function TariffsPage() {
   const { isAuthenticated } = useAuth()
   const { tariffs, apartmentTypes, aptOrder, loading, error, minMaxForTariff } = useTariffs()
-
-  useEffect(() => { capture('tariff_viewed') }, [])
   const subscribeTo = isAuthenticated ? '/booking' : '/register'
 
   /** Сетка цен по типу уборки: из тарифов бэкенда (light = start + optimum, full = basic + comfort) */

@@ -1,5 +1,4 @@
 """Payment service: mock (код), Stripe Checkout, webhook, fallback complete."""
-from typing import Optional, Union
 import asyncio
 import logging
 import secrets
@@ -49,7 +48,7 @@ def _absolute_url(path_or_url: str, settings) -> str:
     return f"{base}/{p.lstrip('/')}"
 
 
-def _stripe_success_url(return_url: Optional[str], settings) -> str:
+def _stripe_success_url(return_url: str | None, settings) -> str:
     """Stripe подставляет session id вместо литерала {CHECKOUT_SESSION_ID}."""
     base = _absolute_url(return_url or "/dashboard/slots?payment=success", settings)
     if "{CHECKOUT_SESSION_ID}" in base:
@@ -58,7 +57,7 @@ def _stripe_success_url(return_url: Optional[str], settings) -> str:
     return f"{base}{sep}session_id={{CHECKOUT_SESSION_ID}}"
 
 
-def _stripe_cancel_url(cancel_url: Optional[str], settings) -> str:
+def _stripe_cancel_url(cancel_url: str | None, settings) -> str:
     return _absolute_url(cancel_url or "/booking", settings)
 
 
@@ -80,13 +79,13 @@ async def create_payment_intent(
     db: AsyncSession,
     subscription_id,
     user_id,
-    return_url: Optional[str] = None,
-    cancel_url: Optional[str] = None,
-) -> tuple[Payment, Optional[str], Optional[str], str]:
+    return_url: str | None = None,
+    cancel_url: str | None = None,
+) -> tuple[Payment, str | None, str | None, str]:
     """Создаёт платёж pending. mock — код в БД + redirect на ЛК; stripe — Checkout URL.
 
     Для KZT в Stripe unit_amount задаётся в тыйынах (×100 от тенге).
-    Возвращает (payment, redirect_url, Optional[confirm_code], provider mock|stripe).
+    Возвращает (payment, redirect_url, confirm_code|None, provider mock|stripe).
     """
     settings = get_settings()
     result = await db.execute(
@@ -256,6 +255,7 @@ async def confirm_payment_by_code(
 ) -> Payment:
     """Подтверждение списания по 6-значному коду (тестовый платёж)."""
     from app.core.exceptions import ForbiddenError, NotFoundError
+
     code = code.strip()
     if len(code) != 6 or not code.isdigit():
         raise ForbiddenError("Неверный формат кода. Введите 6 цифр из SMS/приложения банка.")
@@ -295,7 +295,7 @@ async def handle_payment_webhook(
     db: AsyncSession,
     external_id: str,
     status: str = "completed",
-) -> Optional[Payment]:
+) -> Payment | None:
     """Legacy JSON webhook (mock) или совместимость по external_id."""
     if status != "completed":
         return None

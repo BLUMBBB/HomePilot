@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,7 +10,6 @@ import { useAuth } from '@/contexts/AuthContext'
 
 export function RegisterExecutorPage() {
   const { setUser } = useAuth()
-  const { executeRecaptcha } = useGoogleReCaptcha()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [inviteCode, setInviteCode] = useState('')
@@ -33,14 +31,12 @@ export function RegisterExecutorPage() {
     setError('')
     setLoading(true)
     try {
-      const recaptchaToken = executeRecaptcha ? await executeRecaptcha('register_executor') : undefined
       const data = await registerExecutor({
         invite_code: inviteCode.trim(),
         email: email.trim(),
         password,
         name: name.trim() || null,
         accept_personal_data_processing: true,
-        recaptcha_token: recaptchaToken,
       })
       setAuthTokens(data.access_token, data.refresh_token, data.user)
       setUser(data.user)

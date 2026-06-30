@@ -1,14 +1,5 @@
 """Auth request/response schemas."""
-from typing import Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
-
-
-def _validate_password_complexity(v: str) -> str:
-    if not any(c.isupper() for c in v):
-        raise ValueError("Пароль должен содержать хотя бы одну заглавную букву")
-    if not any(c.isdigit() for c in v):
-        raise ValueError("Пароль должен содержать хотя бы одну цифру")
-    return v
 
 
 class LoginRequest(BaseModel):
@@ -38,19 +29,13 @@ class RegisterRequest(BaseModel):
 
     email: EmailStr
     password: str = Field(..., min_length=8)
-    name: Optional[str] = None
-    phone: Optional[str] = None
+    name: str | None = None
+    phone: str | None = None
     locale: str = "ru"
     accept_personal_data_processing: bool = Field(
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
     )
-    recaptcha_token: Optional[str] = Field(default=None, description="reCAPTCHA v3 token с фронтенда")
-
-    @field_validator("password")
-    @classmethod
-    def password_complexity(cls, v: str) -> str:
-        return _validate_password_complexity(v)
 
     @field_validator("accept_personal_data_processing")
     @classmethod
@@ -77,18 +62,12 @@ class RegisterExecutorRequest(BaseModel):
     invite_code: str
     email: EmailStr
     password: str = Field(..., min_length=8)
-    name: Optional[str] = None
-    phone: Optional[str] = None
+    name: str | None = None
+    phone: str | None = None
     accept_personal_data_processing: bool = Field(
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
     )
-    recaptcha_token: Optional[str] = Field(default=None, description="reCAPTCHA v3 token с фронтенда")
-
-    @field_validator("password")
-    @classmethod
-    def password_complexity(cls, v: str) -> str:
-        return _validate_password_complexity(v)
 
     @field_validator("accept_personal_data_processing")
     @classmethod

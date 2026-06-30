@@ -1,5 +1,4 @@
 """Storage service: save visit photos (local FS)."""
-from typing import Optional
 import os
 import uuid
 from pathlib import Path
@@ -17,7 +16,7 @@ async def save_visit_photo(
     visit_id,
     file: UploadFile,
     checklist_item_id=None,
-) -> tuple[str, Optional[int], Optional[str]]:
+) -> tuple[str, int | None, str | None]:
     """Save file to UPLOAD_DIR, return (file_path, file_size, content_type)."""
     if file.content_type and file.content_type not in ALLOWED_CONTENT_TYPES:
         raise AppException("Допустимые форматы: JPEG, PNG, WebP", status_code=400)

@@ -1,5 +1,4 @@
 """Уведомления: отправка писем (регистрация, подтверждение email и т.п.)."""
-from typing import Optional
 
 import logging
 import smtplib
@@ -7,20 +6,23 @@ from email.message import EmailMessage
 
 from app.config import get_settings
 
-
-
 logger = logging.getLogger(__name__)
 
-def _log_email_to_stdout(to_email: str, subject: str, body: str, *, code: Optional[str] = None, reason: str = "") -> None:
-    """Дублирование письма в лог (docker logs) — dev или fallback при сбое SMTP."""
-    prefix = f"EMAIL ({reason})" if reason else "EMAIL (SMTP не настроен)"
-    logger.info("%s | To: %s | Subject: %s", prefix, to_email, subject)
-    logger.debug("Body: %s", body)
+
+def _log_email_to_stdout(to_email: str, subject: str, body: str, *, code: str | None = None, reason: str = "") -> None:
+    """Дублирование письма в stdout (docker logs) — dev или fallback при сбое SMTP."""
+    prefix = f"=== EMAIL ({reason}) ===" if reason else "=== EMAIL (SMTP не настроен) ==="
+    print(prefix, flush=True)
+    print("To:", to_email, flush=True)
+    print("Subject:", subject, flush=True)
+    print("Body:\n", body, flush=True)
     if code:
-        logger.info("CONFIRMATION CODE for %s: %s", to_email, code)
+        print(">>> КОД ПОДТВЕРЖДЕНИЯ (введите на странице подтверждения):", flush=True)
+        print(f">>> {code}", flush=True)
+    print("=== END EMAIL ===", flush=True)
 
 
-def _send_email(to_email: str, subject: str, body: str, *, code: Optional[str] = None) -> None:
+def _send_email(to_email: str, subject: str, body: str, *, code: str | None = None) -> None:
     """Простая отправка письма через SMTP.
 
     Если SMTP не настроен — только stdout. При ошибке доставки (неверный пароль, сеть и т.д.)

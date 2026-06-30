@@ -1,6 +1,4 @@
-
 import { useCallback, useState } from 'react'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,11 +9,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
 import { cn } from '@/lib/utils'
-import { capture } from '@/lib/analytics'
 
 export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
-  const { executeRecaptcha } = useGoogleReCaptcha()
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -55,16 +51,13 @@ export function RegisterPage() {
     setSuccess('')
     setLoading(true)
     try {
-      const recaptchaToken = executeRecaptcha ? await executeRecaptcha('register') : undefined
       await register({
         name: `${firstName.trim()} ${lastName.trim()}`,
         email: email.trim(),
         password,
         locale: 'ru',
         accept_personal_data_processing: true,
-        recaptcha_token: recaptchaToken,
       })
-      capture('user_signed_up', { method: 'email' })
       setSuccess('Регистрация успешно выполнена. Перенаправляем на страницу подтверждения email…')
       setTimeout(() => navigate('/auth/confirm-email'), 1500)
     } catch (err) {
@@ -159,7 +152,6 @@ export function RegisterPage() {
                   autoComplete="new-password"
                   className="h-12 rounded-xl border-stone-200 focus:ring-forest-900 bg-cream-50/50"
                 />
-                <p className="text-xs text-stone-400">Минимум 8 символов, заглавная буква и цифра</p>
               </div>
 
               <label className="flex items-start gap-3 cursor-pointer group">

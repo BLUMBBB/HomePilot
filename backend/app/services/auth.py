@@ -1,8 +1,5 @@
 """Auth service: register, login, refresh, password."""
-import logging
 import secrets
-from typing import Optional
-
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -34,8 +31,6 @@ from app.schemas.auth import RegisterRequest, RegisterExecutorRequest
 from app.services.notifications import send_password_reset_email, send_registration_confirm_email
 
 
-logger = logging.getLogger(__name__)
-
 async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
     existing = await db.execute(select(User).where(User.email == payload.email))
     if existing.scalar_one_or_none():
@@ -56,7 +51,7 @@ async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
 
     # Отправляем письмо с 6-значным кодом подтверждения email.
     code = await _generate_email_confirm_code(db, user.id)
-    logger.info("sending confirmation email to %s", user.email)
+    print(">>> REGISTER: отправляю письмо с кодом на", user.email, "<<<", flush=True)
     send_registration_confirm_email(user.email, code, locale=user.locale)
 
     return user
@@ -95,7 +90,7 @@ async def register_executor(db: AsyncSession, payload: RegisterExecutorRequest) 
     return user
 
 
-async def authenticate_user(db: AsyncSession, email: str, password: str) -> Optional[User]:
+async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | None:
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user or not user.password_hash or not verify_password(password, user.password_hash):
@@ -112,7 +107,7 @@ def tokens_for_user(user: User) -> tuple[str, str, int]:
     return access, refresh, expires_sec
 
 
-async def get_user_by_refresh_token(db: AsyncSession, refresh_token: str) -> Optional[User]:
+async def get_user_by_refresh_token(db: AsyncSession, refresh_token: str) -> User | None:
     payload = decode_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         return None
