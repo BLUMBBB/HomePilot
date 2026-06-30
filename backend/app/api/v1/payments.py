@@ -4,7 +4,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-logger = logging.getLogger(__name__)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +17,8 @@ from app.schemas.payment import (
     SubmitCardRequest,
 )
 from app.services import payment as payment_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 

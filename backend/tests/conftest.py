@@ -24,7 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.core.security import create_access_token, get_password_hash
 from app.db.base import Base
 from app.db.session import get_db
-from app.main import create_app, _rate_limiter
+from app.main import create_app
 from app.models.user import User, UserRole
 
 
@@ -58,9 +58,6 @@ async def db(session_factory) -> AsyncSession:
 
 @pytest_asyncio.fixture
 async def client(session_factory):
-    # Clear rate limiter state so tests don't interfere with each other.
-    _rate_limiter._buckets.clear()
-
     app = create_app()
 
     async def _override_get_db():
