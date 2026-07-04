@@ -74,7 +74,6 @@ async def list_subscriptions(
     out = []
     for sub in subs:
         await sub_service.ensure_active_subscription_dates(db, sub)
-        sub = await _reload_subscription_for_response(db, sub)
         price = await sub_service.get_price_for_subscription(
             db, sub.tariff_id, sub.apartment_type_id
         )

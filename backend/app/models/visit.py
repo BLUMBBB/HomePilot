@@ -26,12 +26,12 @@ class Visit(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     subscription_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True), ForeignKey("subscriptions.id", ondelete="CASCADE"), nullable=False, index=True
     )
     executor_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
+    scheduled_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     time_slot_start: Mapped[time] = mapped_column(Time, nullable=False)
     time_slot_end: Mapped[time] = mapped_column(Time, nullable=False)
     status: Mapped[str] = mapped_column(Enum(VisitStatus), nullable=False, default=VisitStatus.scheduled)
@@ -56,7 +56,7 @@ class VisitPhoto(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     visit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True), ForeignKey("visits.id", ondelete="CASCADE"), nullable=False, index=True
     )
     checklist_item_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("checklist_items.id", ondelete="SET NULL"), nullable=True

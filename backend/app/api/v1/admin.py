@@ -183,7 +183,6 @@ async def admin_get_user(
     subscriptions_out = []
     for sub in subs:
         await sub_service.ensure_active_subscription_dates(db, sub)
-        sub = await sub_service.load_subscription_eager(db, sub.id)
         price = await sub_service.get_price_for_subscription(db, sub.tariff_id, sub.apartment_type_id)
         subscriptions_out.append(_sub_to_dict(sub, price=price, tariff=sub.tariff, apt=sub.apartment_type))
 
@@ -315,7 +314,6 @@ async def admin_list_subscriptions(
     out = []
     for sub in subs:
         await sub_service.ensure_active_subscription_dates(db, sub)
-        sub = await sub_service.load_subscription_eager(db, sub.id, with_user=True, with_executor=True)
         price = await sub_service.get_price_for_subscription(db, sub.tariff_id, sub.apartment_type_id)
         row = _sub_to_dict(sub, price=price, tariff=sub.tariff, apt=sub.apartment_type)
         row["user_email"] = sub.user.email if sub.user else None
