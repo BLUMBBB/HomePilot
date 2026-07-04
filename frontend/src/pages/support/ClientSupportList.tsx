@@ -14,6 +14,7 @@ import {
   type VisitItem,
   type ExecutorVisitItem,
 } from '@/api/client'
+import { capture } from '@/lib/analytics'
 
 function ticketStatusLabel(s: string): string {
   const m: Record<string, string> = {
@@ -109,6 +110,7 @@ export function ClientSupportList({ basePath }: { basePath: BasePath }) {
         message: message.trim(),
         visit_id: visitId || null,
       })
+      capture('support_ticket_created')
       setSubject('')
       setMessage('')
       setVisitId('')

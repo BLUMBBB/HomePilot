@@ -18,6 +18,7 @@ import {
   type TariffItem,
   type ApartmentTypeItem,
 } from '@/api/client'
+import { capture } from '@/lib/analytics'
 
 const steps = [
   { id: 1, title: 'Тариф', icon: Home },
@@ -163,6 +164,7 @@ export function BookingPage() {
         premium_ironing: formData.premium_ironing,
         accept_offer: true,
       })
+      capture('subscription_created', { tariff_id: formData.tariff_id })
       const origin = typeof window !== 'undefined' ? window.location.origin : ''
       const intent = await createPaymentIntent(sub.id, {
         return_url: origin ? `${origin}/dashboard/slots?payment=success` : undefined,

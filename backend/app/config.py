@@ -96,6 +96,10 @@ class Settings(BaseSettings):
     # Google Sign-In (GIS id_token) — тот же Client ID, что и на фронте (VITE_GOOGLE_CLIENT_ID).
     GOOGLE_CLIENT_ID: str | None = Field(default=None, description="OAuth 2.0 Client ID для проверки id_token")
 
+    # PostHog (server-side analytics, см. app/services/posthog_client.py)
+    POSTHOG_API_KEY: str | None = Field(default=None)
+    POSTHOG_HOST: str = Field(default="https://eu.i.posthog.com")
+
     # Сид: учётки админ-панели (создаются только если пользователя с таким email ещё нет).
     SEED_ADMIN_EMAIL: str = Field(default="admin@homepilot.kz")
     SEED_ADMIN_PASSWORD: str = Field(default="admin123", min_length=8)

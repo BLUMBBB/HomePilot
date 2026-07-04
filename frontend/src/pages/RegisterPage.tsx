@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
 import { cn } from '@/lib/utils'
+import { capture } from '@/lib/analytics'
 
 export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
@@ -31,6 +32,7 @@ export function RegisterPage() {
       setGoogleLoading(true)
       try {
         const user = await loginWithGoogle(idToken)
+        capture('sign_up', { method: 'google' })
         navigate(getPostLoginPath(user), { replace: true })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Не удалось зарегистрироваться через Google.')
@@ -58,6 +60,7 @@ export function RegisterPage() {
         locale: 'ru',
         accept_personal_data_processing: true,
       })
+      capture('sign_up', { method: 'email' })
       setSuccess('Регистрация успешно выполнена. Перенаправляем на страницу подтверждения email…')
       setTimeout(() => navigate('/auth/confirm-email'), 1500)
     } catch (err) {

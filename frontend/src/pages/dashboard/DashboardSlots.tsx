@@ -11,6 +11,7 @@ import {
   type SubscriptionItem,
   type VisitItem,
 } from '@/api/client'
+import { capture } from '@/lib/analytics'
 
 /** Рабочие часы 8:00–18:00. Варианты начала: 8:00–17:00, окончания: 9:00–18:00 */
 const START_OPTIONS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
@@ -267,6 +268,7 @@ function SlotEditor({ visit, subscription, index, onSave, saving, setSaving, set
         new_time_slot_start: start,
         new_time_slot_end: end,
       })
+      capture('visit_slot_scheduled', { visit_id: visit.id })
       onSave()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка сохранения')

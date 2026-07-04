@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react'
 import { BrandLockup } from '@/components/BrandLogo'
 import { registerExecutor, setAuthTokens } from '@/api/client'
 import { useAuth } from '@/contexts/AuthContext'
+import { capture } from '@/lib/analytics'
 
 export function RegisterExecutorPage() {
   const { setUser } = useAuth()
@@ -40,6 +41,7 @@ export function RegisterExecutorPage() {
       })
       setAuthTokens(data.access_token, data.refresh_token, data.user)
       setUser(data.user)
+      capture('executor_sign_up')
       navigate('/executor', { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось зарегистрироваться.')

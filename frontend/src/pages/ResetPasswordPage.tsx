@@ -6,6 +6,7 @@ import { resetPassword } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { capture } from '@/lib/analytics'
 
 export function ResetPasswordPage() {
   const navigate = useNavigate()
@@ -39,6 +40,7 @@ export function ResetPasswordPage() {
     setLoading(true)
     try {
       const res = await resetPassword(token, newPassword)
+      capture('password_reset_completed')
       setMessage(res.message)
       setTimeout(() => navigate('/login'), 1200)
     } catch (err) {

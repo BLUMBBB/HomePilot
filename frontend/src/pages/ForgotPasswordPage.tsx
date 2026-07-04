@@ -6,6 +6,7 @@ import { forgotPassword } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { capture } from '@/lib/analytics'
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -24,6 +25,7 @@ export function ForgotPasswordPage() {
     setLoading(true)
     try {
       const res = await forgotPassword(email)
+      capture('password_reset_requested')
       setMessage(res.message)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось отправить письмо.')

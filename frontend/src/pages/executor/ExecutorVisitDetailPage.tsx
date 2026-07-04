@@ -12,6 +12,7 @@ import {
   type ExecutorVisitDetail,
   type ChecklistResultItem,
 } from '@/api/client'
+import { capture } from '@/lib/analytics'
 
 function formatTime(s: string): string {
   if (!s) return '—'
@@ -75,6 +76,7 @@ export function ExecutorVisitDetailPage() {
     setActionLoading(true)
     try {
       await startExecutorVisit(visitId)
+      capture('visit_started', { visit_id: visitId })
       load()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка')
@@ -129,6 +131,7 @@ export function ExecutorVisitDetailPage() {
     setActionLoading(true)
     try {
       await completeExecutorVisit(visitId, results)
+      capture('visit_completed', { visit_id: visitId })
       navigate('/executor/visits')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка завершения визита')

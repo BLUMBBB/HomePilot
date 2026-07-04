@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { AnalyticsBoot } from '@/components/AnalyticsBoot'
 import { Layout } from '@/components/Layout'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import { HomePage } from '@/pages/HomePage'
@@ -45,6 +46,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AnalyticsBoot />
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />

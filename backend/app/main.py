@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
 from app.api.v1.router import api_v1_router
 from app.core.exceptions import AppException, app_exception_handler
+from app.core.logging_config import configure_logging
 from app.openapi_config import (
     API_DESCRIPTION,
     CONTACT,
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 
 def create_app() -> FastAPI:
+    configure_logging()
     settings = get_settings()
     app = FastAPI(
         title="HomePilot API",
