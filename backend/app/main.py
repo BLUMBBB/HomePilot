@@ -3,12 +3,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 
 from app.config import get_settings
 from app.api.v1.router import api_v1_router
+from app.core.dependencies import DbSession
 from app.core.exceptions import AppException, app_exception_handler
 from app.core.logging_config import configure_logging
 from app.openapi_config import (
@@ -72,9 +74,14 @@ def create_app() -> FastAPI:
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
     @app.get("/health")
-    async def health() -> dict:
-        """Health check для деплоя."""
-        return {"status": "ok", "version": "1.0.0"}
+    async def health(db: DbSession, response: Response) -> dict:
+        """Health check для деплоя: пингует БД, а не только сам процесс."""
+        try:
+            await db.execute(text("SELECT 1"))
+            return {"status": "ok", "version": "1.0.0", "database": "ok"}
+        except Exception:
+            response.status_code = 503
+            return {"status": "degraded", "version": "1.0.0", "database": "error"}
 
     return app
 
