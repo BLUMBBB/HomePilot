@@ -43,3 +43,9 @@ design/
 backend/uploads/
 payment_details.txt
 *.tsbuildinfo
+
+# Deploy keys (никогда не коммитить приватные ключи)
+homepilot_deploy_key
+homepilot_deploy_key.pub
+*_deploy_key
+*_deploy_key.pub
