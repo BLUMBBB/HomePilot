@@ -1,4 +1,5 @@
 """Auth service: register, login, refresh, password."""
+import asyncio
 import secrets
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
@@ -50,9 +51,10 @@ async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
     await db.refresh(user)
 
     # Отправляем письмо с 6-значным кодом подтверждения email.
+    # SMTP-вызов внутри — блокирующий; уводим в поток, чтобы не стопорить event loop.
     code = await _generate_email_confirm_code(db, user.id)
     print(">>> REGISTER: отправляю письмо с кодом на", user.email, "<<<", flush=True)
-    send_registration_confirm_email(user.email, code, locale=user.locale)
+    await asyncio.to_thread(send_registration_confirm_email, user.email, code, locale=user.locale)
 
     return user
 
@@ -260,7 +262,7 @@ async def request_password_reset(db: AsyncSession, email: str) -> None:
     if not user or not user.password_hash:
         return
     code = await _generate_password_reset_code(db, user.id)
-    send_password_reset_email(user.email, code, locale=(user.locale or "ru"))
+    await asyncio.to_thread(send_password_reset_email, user.email, code, locale=(user.locale or "ru"))
 
 
 async def reset_password_with_code(db: AsyncSession, token: str, new_password: str) -> None:
