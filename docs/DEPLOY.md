@@ -25,7 +25,11 @@ Optional:
 ```bash
 export FRONTEND_PORT=80
 export PAYMENT_PROVIDER=mock
+export RECAPTCHA_SECRET_KEY='<recaptcha-v3-secret-key>'
+export VITE_RECAPTCHA_SITE_KEY='<recaptcha-v3-site-key>'
 ```
+
+`RECAPTCHA_SECRET_KEY`/`VITE_RECAPTCHA_SITE_KEY` protect register/login (see [`app/services/recaptcha.py`](../backend/app/services/recaptcha.py)). Get a key pair at https://www.google.com/recaptcha/admin (type: v3, register the prod domain). Without them set, captcha verification is a no-op — forms work but are unprotected.
 
 ## 3) Build and start
 
@@ -89,3 +93,17 @@ up -d --build`.
 
 Set these under `Settings → Secrets and variables → Actions` in the GitHub
 repo. Never commit private keys — `homepilot_deploy_key*` is gitignored.
+
+## 8) Backups and alerts (cron)
+
+On the server, add both to the `deploy` user's crontab (`crontab -e`):
+
+```cron
+0 3 * * *  /opt/homepilot/scripts/backup.sh >> /var/log/homepilot-backup.log 2>&1
+*/5 * * * * /opt/homepilot/scripts/alerts.sh >> /var/log/homepilot-alerts.log 2>&1
+```
+
+- [`scripts/backup.sh`](../scripts/backup.sh) — daily `pg_dump` of the prod DB, gzipped, kept for `KEEP_DAYS` (default 7). Restore with [`scripts/restore.sh`](../scripts/restore.sh).
+- [`scripts/alerts.sh`](../scripts/alerts.sh) — every 5 minutes, checks that `/health` is reachable and reports `database: ok`, and that root disk usage is below `DISK_THRESHOLD_PERCENT` (default 85). On failure it emails `ALERT_EMAIL_TO` via the same SMTP creds as the app (falls back to just logging if SMTP/`ALERT_EMAIL_TO` isn't set).
+
+Add `ALERT_EMAIL_TO=<ops-email>` to the server's `.env` to enable email alerts.

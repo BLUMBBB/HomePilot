@@ -63,6 +63,7 @@ docs/        # документация проекта
 
 - [Описание проекта (RU)](docs/PROJECT_DESCRIPTION.md)  
 - [Деплой](docs/DEPLOY.md)  
+- [Как всё запускать: Docker, тесты, алерты, PostHog, капча, Locust](docs/RUNBOOK.md)  
 - [Бэкенд: установка и команды](backend/README.md)  
 - [Фронтенд: запуск и сборка](frontend/README.md)
 
