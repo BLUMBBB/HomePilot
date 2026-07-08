@@ -37,14 +37,17 @@ def db_setup():
     engine.dispose()
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def async_engine():
+    """Function-scoped: pytest-asyncio gives each test its own event loop, and an
+    asyncpg engine/pool can't be shared across loops without "attached to a
+    different loop" errors. A fresh engine per test avoids that entirely."""
     engine = create_async_engine(os.environ["DATABASE_URL"], echo=False)
     yield engine
     await engine.dispose()
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def session_factory(async_engine):
     return async_sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
