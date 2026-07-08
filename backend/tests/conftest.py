@@ -20,6 +20,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from app.core.security import create_access_token, get_password_hash
 from app.db.base import Base
@@ -41,8 +42,11 @@ def db_setup():
 async def async_engine():
     """Function-scoped: pytest-asyncio gives each test its own event loop, and an
     asyncpg engine/pool can't be shared across loops without "attached to a
-    different loop" errors. A fresh engine per test avoids that entirely."""
-    engine = create_async_engine(os.environ["DATABASE_URL"], echo=False)
+    different loop" errors. A fresh engine per test avoids that entirely.
+    NullPool: within one test, `db` and `client` each open their own session —
+    a pooled connection reused across them caused "another operation is in
+    progress"; NullPool gives every checkout a brand-new physical connection."""
+    engine = create_async_engine(os.environ["DATABASE_URL"], echo=False, poolclass=NullPool)
     yield engine
     await engine.dispose()
 
