@@ -9,6 +9,7 @@ import { BrandLockup } from '@/components/BrandLogo'
 import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
 import { capture } from '@/lib/analytics'
+import { getCaptchaToken } from '@/lib/recaptcha'
 
 export function LoginPage() {
   const { login, loginWithGoogle } = useAuth()
@@ -49,7 +50,8 @@ export function LoginPage() {
     }
     setLoading(true)
     try {
-      const user = await login({ email: email.trim(), password })
+      const captcha_token = await getCaptchaToken('login')
+      const user = await login({ email: email.trim(), password, captcha_token })
       capture('login', { method: 'email' })
       navigate(getPostLoginPath(user), { replace: true })
     } catch (err) {

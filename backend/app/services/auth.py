@@ -29,10 +29,14 @@ from app.models.password_reset_code import PasswordResetCode
 from app.models.user import UserRole
 from app.models.executor_invite import ExecutorInvite
 from app.schemas.auth import RegisterRequest, RegisterExecutorRequest
+from app.services import posthog_client
+from app.services import recaptcha
 from app.services.notifications import send_password_reset_email, send_registration_confirm_email
 
 
 async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
+    if not await recaptcha.verify(payload.captcha_token, "register"):
+        raise AppException("Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова.", status_code=400)
     existing = await db.execute(select(User).where(User.email == payload.email))
     if existing.scalar_one_or_none():
         raise ConflictError("Email уже зарегистрирован")
@@ -55,11 +59,14 @@ async def register_client(db: AsyncSession, payload: RegisterRequest) -> User:
     code = await _generate_email_confirm_code(db, user.id)
     print(">>> REGISTER: отправляю письмо с кодом на", user.email, "<<<", flush=True)
     await asyncio.to_thread(send_registration_confirm_email, user.email, code, locale=user.locale)
+    await posthog_client.capture(str(user.id), "server_user_registered", {"role": "client"})
 
     return user
 
 
 async def register_executor(db: AsyncSession, payload: RegisterExecutorRequest) -> User:
+    if not await recaptcha.verify(payload.captcha_token, "register"):
+        raise AppException("Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова.", status_code=400)
     invite = await db.execute(
         select(ExecutorInvite).where(
             ExecutorInvite.code == payload.invite_code,
@@ -89,10 +96,15 @@ async def register_executor(db: AsyncSession, payload: RegisterExecutorRequest) 
     inv.used_at = datetime.now(timezone.utc)
     await db.flush()
     await db.refresh(user)
+    await posthog_client.capture(str(user.id), "server_user_registered", {"role": "executor"})
     return user
 
 
-async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | None:
+async def authenticate_user(
+    db: AsyncSession, email: str, password: str, captcha_token: str | None = None
+) -> User | None:
+    if not await recaptcha.verify(captcha_token, "login"):
+        raise AppException("Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова.", status_code=400)
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user or not user.password_hash or not verify_password(password, user.password_hash):
@@ -100,6 +112,7 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
     # Для клиентов требуем подтверждённый email перед входом.
     if user.role == UserRole.client and not user.email_verified_at:
         raise ForbiddenError("Email не подтверждён. Проверьте почту и введите 6-значный код из письма.")
+    await posthog_client.capture(str(user.id), "server_login", {"role": user.role.value})
     return user
 
 

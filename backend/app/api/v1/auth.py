@@ -70,7 +70,9 @@ async def login(
     payload: LoginRequest,
     db: DbSession,
 ):
-    user = await auth_service.authenticate_user(db, payload.email, payload.password)
+    user = await auth_service.authenticate_user(
+        db, payload.email, payload.password, payload.captcha_token
+    )
     if not user:
         from fastapi import HTTPException
         raise HTTPException(status_code=401, detail="Неверный email или пароль")

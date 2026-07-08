@@ -8,6 +8,7 @@ import { BrandLockup } from '@/components/BrandLogo'
 import { registerExecutor, setAuthTokens } from '@/api/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { capture } from '@/lib/analytics'
+import { getCaptchaToken } from '@/lib/recaptcha'
 
 export function RegisterExecutorPage() {
   const { setUser } = useAuth()
@@ -32,12 +33,14 @@ export function RegisterExecutorPage() {
     setError('')
     setLoading(true)
     try {
+      const captcha_token = await getCaptchaToken('register')
       const data = await registerExecutor({
         invite_code: inviteCode.trim(),
         email: email.trim(),
         password,
         name: name.trim() || null,
         accept_personal_data_processing: true,
+        captcha_token,
       })
       setAuthTokens(data.access_token, data.refresh_token, data.user)
       setUser(data.user)

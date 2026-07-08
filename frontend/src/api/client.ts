@@ -1,7 +1,7 @@
 /** В dev с Vite proxy используем относительный путь; иначе задайте VITE_API_BASE (например http://localhost:8001/api/v1) */
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1';
 
-export type LoginBody = { email: string; password: string };
+export type LoginBody = { email: string; password: string; captcha_token?: string };
 export type LoginResponse = {
   access_token: string;
   refresh_token: string;
@@ -18,6 +18,7 @@ export type RegisterBody = {
   locale?: string;
   /** Согласие на обработку ПД — обязательно true (дублируется двойным подтверждением на форме). */
   accept_personal_data_processing: boolean;
+  captcha_token?: string;
 };
 export type RegisterResponse = { user: UserProfile; message?: string };
 
@@ -760,6 +761,7 @@ export type RegisterExecutorBody = {
   name?: string | null;
   phone?: string | null;
   accept_personal_data_processing: boolean;
+  captcha_token?: string;
 };
 
 /** Регистрация исполнителя по коду приглашения (ответ как у login). */
@@ -774,6 +776,7 @@ export async function registerExecutor(body: RegisterExecutorBody): Promise<Logi
       name: body.name ?? null,
       phone: body.phone ?? null,
       accept_personal_data_processing: body.accept_personal_data_processing,
+      captcha_token: body.captcha_token,
     }),
   });
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;

@@ -10,6 +10,7 @@ import { GoogleAuthButton } from '@/components/GoogleAuthButton'
 import { getPostLoginPath } from '@/lib/postLoginRedirect'
 import { cn } from '@/lib/utils'
 import { capture } from '@/lib/analytics'
+import { getCaptchaToken } from '@/lib/recaptcha'
 
 export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
@@ -53,12 +54,14 @@ export function RegisterPage() {
     setSuccess('')
     setLoading(true)
     try {
+      const captcha_token = await getCaptchaToken('register')
       await register({
         name: `${firstName.trim()} ${lastName.trim()}`,
         email: email.trim(),
         password,
         locale: 'ru',
         accept_personal_data_processing: true,
+        captcha_token,
       })
       capture('sign_up', { method: 'email' })
       setSuccess('Регистрация успешно выполнена. Перенаправляем на страницу подтверждения email…')

@@ -11,6 +11,9 @@ class LoginRequest(BaseModel):
 
     email: EmailStr
     password: str
+    captcha_token: str | None = Field(
+        default=None, description="Токен reCAPTCHA v3 с фронта (action=login)"
+    )
 
 
 class RegisterRequest(BaseModel):
@@ -35,6 +38,9 @@ class RegisterRequest(BaseModel):
     accept_personal_data_processing: bool = Field(
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
+    )
+    captcha_token: str | None = Field(
+        default=None, description="Токен reCAPTCHA v3 с фронта (action=register)"
     )
 
     @field_validator("accept_personal_data_processing")
@@ -67,6 +73,9 @@ class RegisterExecutorRequest(BaseModel):
     accept_personal_data_processing: bool = Field(
         ...,
         description="Подтверждение согласия на обработку персональных данных (обязательно).",
+    )
+    captcha_token: str | None = Field(
+        default=None, description="Токен reCAPTCHA v3 с фронта (action=register)"
     )
 
     @field_validator("accept_personal_data_processing")

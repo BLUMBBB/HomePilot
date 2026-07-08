@@ -9,6 +9,7 @@ from sqlalchemy.orm import selectinload
 from app.models import Subscription, TariffPrice, Visit
 from app.models.subscription import SubscriptionStatus
 from app.models.visit import VisitStatus
+from app.services import posthog_client
 from app.services import visit as visit_service
 
 
@@ -164,4 +165,7 @@ async def activate_subscription(db: AsyncSession, subscription_id) -> Subscripti
         for v in res.scalars().all():
             await visit_service.assign_executor(db, v, sub.city_id)
     await db.refresh(sub)
+    await posthog_client.capture(
+        str(sub.user_id), "server_subscription_activated", {"subscription_id": str(sub.id)}
+    )
     return sub

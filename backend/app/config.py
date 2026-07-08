@@ -100,6 +100,10 @@ class Settings(BaseSettings):
     POSTHOG_API_KEY: str | None = Field(default=None)
     POSTHOG_HOST: str = Field(default="https://eu.i.posthog.com")
 
+    # reCAPTCHA v3 (см. app/services/recaptcha.py) — отключена, если секрет не задан.
+    RECAPTCHA_SECRET_KEY: str | None = Field(default=None)
+    RECAPTCHA_MIN_SCORE: float = Field(default=0.5, description="Минимальный score reCAPTCHA v3 (0.0-1.0)")
+
     # Сид: учётки админ-панели (создаются только если пользователя с таким email ещё нет).
     SEED_ADMIN_EMAIL: str = Field(default="admin@homepilot.kz")
     SEED_ADMIN_PASSWORD: str = Field(default="admin123", min_length=8)
