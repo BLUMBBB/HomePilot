@@ -56,7 +56,7 @@ docker run -d --name homepilot_test_pg \
 **Шаг 2 — поставить зависимости (один раз, дальше не нужно):**
 ```bash
 cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/backend"
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 **Шаг 3 — запустить тесты:**
