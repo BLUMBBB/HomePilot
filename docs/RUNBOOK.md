@@ -6,6 +6,10 @@
 скажите, дам те же команды в PowerShell-синтаксисе (там `&&` не работает и
 многострочные `export` пишутся иначе).
 
+Все `cd` ниже используют `git rev-parse --show-toplevel` — это просто «корень
+склонированного репозитория», работает на любой машине и в любой папке, куда
+вы склонировали HomePilot, без привязки к конкретному пути/пользователю.
+
 Для деплоя на прод-сервер — отдельный документ [DEPLOY.md](DEPLOY.md). Здесь —
 только локальная разработка и проверки.
 
@@ -20,7 +24,7 @@ backend (FastAPI) и frontend (Vite), сам накатывает таблицы
 Убедитесь, что Docker Desktop запущен, затем:
 
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal"
+cd "$(git rev-parse --show-toplevel)"
 docker compose up --build
 ```
 
@@ -55,13 +59,13 @@ docker run -d --name homepilot_test_pg \
 
 **Шаг 2 — поставить зависимости (один раз, дальше не нужно):**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/backend"
+cd "$(git rev-parse --show-toplevel)/backend"
 pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 **Шаг 3 — запустить тесты:**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/backend"
+cd "$(git rev-parse --show-toplevel)/backend"
 DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5555/homepilot_test" \
 DATABASE_URL_SYNC="postgresql://postgres:postgres@localhost:5555/homepilot_test" \
 SECRET_KEY="test-secret-key-at-least-32-characters-long" \
@@ -89,7 +93,7 @@ docker rm -f homepilot_test_pg
 
 **Алерты (health-check + место на диске):**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal"
+cd "$(git rev-parse --show-toplevel)"
 bash scripts/alerts.sh
 ```
 Если backend из шага 1 запущен — увидите либо тишину (всё ок), либо строку
@@ -98,7 +102,7 @@ bash scripts/alerts.sh
 
 **Бэкап БД (только если поднят стек из шага 1):**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal"
+cd "$(git rev-parse --show-toplevel)"
 PROJECT_DIR=. COMPOSE_FILE=docker-compose.yml BACKUP_DIR=/tmp/hp-backups bash scripts/backup.sh
 ```
 Проверить результат:
@@ -125,14 +129,14 @@ ls -la /tmp/hp-backups
 
 **Шаг 2 — создать `frontend/.env`** (файла ещё нет, создайте):
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/frontend"
+cd "$(git rev-parse --show-toplevel)/frontend"
 printf 'VITE_POSTHOG_KEY=phc_ВАШ_КЛЮЧ\nVITE_POSTHOG_HOST=https://eu.i.posthog.com\n' > .env
 ```
 (замените `phc_ВАШ_КЛЮЧ` на реальный ключ из шага 1)
 
 **Шаг 3 — дописать в `backend/.env`** (файл уже есть, просто добавьте строки в конец):
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/backend"
+cd "$(git rev-parse --show-toplevel)/backend"
 printf '\nPOSTHOG_API_KEY=phc_ВАШ_КЛЮЧ\nPOSTHOG_HOST=https://eu.i.posthog.com\n' >> .env
 ```
 
@@ -144,8 +148,7 @@ printf '\nPOSTHOG_API_KEY=phc_ВАШ_КЛЮЧ\nPOSTHOG_HOST=https://eu.i.posthog
   → залогиниться на сайте → должен появиться POST-запрос со статусом 200
 - В логах backend при старте должна быть строка
   `PostHog server-side analytics initialised (host=...)` — если её нет, ключ не подхватился
-- В самом PostHog: **Activity → Explore** (у вас это
-  https://eu.posthog.com/project/215744/activity/explore) → там должны появиться
+- В самом PostHog: **Activity → Explore** вашего проекта → там должны появиться
   события `sign_up`, `login` (с фронта) и `server_login`, `server_user_registered`,
   `server_subscription_activated` (с бэкенда) — обычно за несколько секунд
 
@@ -161,13 +164,13 @@ printf '\nPOSTHOG_API_KEY=phc_ВАШ_КЛЮЧ\nPOSTHOG_HOST=https://eu.i.posthog
 
 **Шаг 2 — дописать во `frontend/.env`:**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/frontend"
+cd "$(git rev-parse --show-toplevel)/frontend"
 printf '\nVITE_RECAPTCHA_SITE_KEY=6LВАШ_SITE_KEY\n' >> .env
 ```
 
 **Шаг 3 — дописать в `backend/.env`:**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/backend"
+cd "$(git rev-parse --show-toplevel)/backend"
 printf '\nRECAPTCHA_SECRET_KEY=6LВАШ_SECRET_KEY\n' >> .env
 ```
 
@@ -182,7 +185,7 @@ printf '\nRECAPTCHA_SECRET_KEY=6LВАШ_SECRET_KEY\n' >> .env
 реальной регистрации в Google reCAPTCHA admin) — использовать публичный
 тестовый ключ Google:
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal/frontend"
+cd "$(git rev-parse --show-toplevel)/frontend"
 printf 'VITE_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI\n' > .env.local
 npm run dev
 ```
@@ -191,7 +194,7 @@ npm run dev
 `google.com/recaptcha/api.js` и `api2/anchor?...size=invisible`. После проверки
 удалить файл:
 ```bash
-rm "C:/Users/Aldiyar/Desktop/HomePilot-main graal/frontend/.env.local"
+rm "$(git rev-parse --show-toplevel)/frontend/.env.local"
 ```
 
 ---
@@ -203,7 +206,7 @@ rm "C:/Users/Aldiyar/Desktop/HomePilot-main graal/frontend/.env.local"
 
 **Шаг 1 — поднять backend + БД** (если ещё не запущены):
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal"
+cd "$(git rev-parse --show-toplevel)"
 docker compose up -d --build
 ```
 
@@ -214,7 +217,7 @@ pip install locust
 
 **Шаг 3 — прогнать тест, 50 пользователей, 3 минуты, с сохранением результата в файл:**
 ```bash
-cd "C:/Users/Aldiyar/Desktop/HomePilot-main graal"
+cd "$(git rev-parse --show-toplevel)"
 mkdir -p loadtest/results
 locust -f loadtest/locustfile.py --host http://localhost:8001 \
   --users 50 --spawn-rate 5 --run-time 3m --headless \
