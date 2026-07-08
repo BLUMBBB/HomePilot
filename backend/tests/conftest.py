@@ -99,3 +99,28 @@ def auth_headers(verified_user: User) -> dict[str, str]:
     """Bearer token headers for the verified_user fixture."""
     access_token, _ = create_access_token(verified_user.id, verified_user.role.value)
     return {"Authorization": f"Bearer {access_token}"}
+
+
+@pytest_asyncio.fixture
+async def admin_user(db: AsyncSession) -> User:
+    user = User(
+        email=f"admin_{uuid.uuid4().hex[:8]}@test.com",
+        password_hash=get_password_hash("AdminPass123"),
+        role=UserRole.admin,
+        name="Test Admin",
+        locale="ru",
+        is_active=True,
+        email_verified_at=datetime.now(timezone.utc),
+        personal_data_consent_at=datetime.now(timezone.utc),
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+@pytest.fixture
+def admin_headers(admin_user: User) -> dict[str, str]:
+    """Bearer token headers for the admin_user fixture."""
+    access_token, _ = create_access_token(admin_user.id, admin_user.role.value)
+    return {"Authorization": f"Bearer {access_token}"}
